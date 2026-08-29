@@ -1,0 +1,335 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ---------- Auth.js required models ----------
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ---------- Core domain models ----------
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  passwordHash  String?
+  emailVerified DateTime?
+  image         String?
+  role          String?
+  bio           String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts        Account[]
+  sessions        Session[]
+  ideas           Idea[]
+  projects        Project[]
+  notifications   Notification[]
+  preferences     UserPreference?
+  aiConversations AIConversation[]
+  aiUsage         AIUsageLog[]
+}
+
+model UserPreference {
+  id            String  @id @default(cuid())
+  userId        String  @unique
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  theme         Theme   @default(SYSTEM)
+  aiProvider    String?
+  notifyTasks   Boolean @default(true)
+  notifyProject Boolean @default(true)
+}
+
+enum Theme {
+  LIGHT
+  DARK
+  SYSTEM
+}
+
+model Idea {
+  id          String     @id @default(cuid())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  category    String?
+  tags        String[]
+  status      IdeaStatus @default(INBOX)
+  favorite    Boolean    @default(false)
+  project     Project?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([userId, status])
+}
+
+enum IdeaStatus {
+  INBOX
+  EXPLORING
+  PLANNED
+  BUILDING
+  ARCHIVED
+}
+
+model Project {
+  id        String        @id @default(cuid())
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ideaId    String?       @unique
+  idea      Idea?         @relation(fields: [ideaId], references: [id])
+  name      String
+  status    ProjectStatus @default(EXPLORING)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  problem         ProjectProblem?
+  audience        ProjectAudience?
+  solution        ProjectSolution?
+  features        Feature[]
+  mvpPlan         MVPPlan?
+  milestones      Milestone[]
+  tasks           Task[]
+  notes           Note[]
+  aiConversations AIConversation[]
+
+  @@index([userId, status])
+}
+
+enum ProjectStatus {
+  EXPLORING
+  PLANNED
+  BUILDING
+  COMPLETED
+}
+
+model ProjectProblem {
+  id           String   @id @default(cuid())
+  projectId    String   @unique
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  problem      String?
+  alternatives String?
+  whyItMatters String?
+  updatedAt    DateTime @updatedAt
+}
+
+model ProjectAudience {
+  id                String   @id @default(cuid())
+  projectId         String   @unique
+  project           Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  primaryAudience   String?
+  secondaryAudience String?
+  painPoints        String[]
+  isAiAssumption    Boolean  @default(false)
+  updatedAt         DateTime @updatedAt
+}
+
+model ProjectSolution {
+  id              String   @id @default(cuid())
+  projectId       String   @unique
+  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  description     String?
+  valueProp       String?
+  keyBenefits     String[]
+  differentiators String[]
+  updatedAt       DateTime @updatedAt
+}
+
+model Feature {
+  id          String          @id @default(cuid())
+  projectId   String
+  project     Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  priority    FeaturePriority @default(SHOULD_HAVE)
+  status      FeatureStatus   @default(IDEA)
+  order       Int             @default(0)
+  mvpFeature  MVPFeature?
+  createdAt   DateTime        @default(now())
+
+  @@index([projectId, priority])
+}
+
+enum FeaturePriority {
+  MUST_HAVE
+  SHOULD_HAVE
+  COULD_HAVE
+  LATER
+}
+
+enum FeatureStatus {
+  IDEA
+  PLANNED
+  BUILDING
+  COMPLETED
+}
+
+model MVPPlan {
+  id              String       @id @default(cuid())
+  projectId       String       @unique
+  project         Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  goal            String?
+  coreUsers       String?
+  coreProblem     String?
+  successCriteria String[]
+  aiGenerated     Boolean      @default(false)
+  approvedAt      DateTime?
+  mvpFeatures     MVPFeature[]
+  updatedAt       DateTime     @updatedAt
+}
+
+model MVPFeature {
+  id        String  @id @default(cuid())
+  mvpPlanId String
+  mvpPlan   MVPPlan @relation(fields: [mvpPlanId], references: [id], onDelete: Cascade)
+  featureId String  @unique
+  feature   Feature @relation(fields: [featureId], references: [id])
+  inScope   Boolean @default(true)
+}
+
+model Milestone {
+  id          String          @id @default(cuid())
+  projectId   String
+  project     Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  targetDate  DateTime?
+  status      MilestoneStatus @default(NOT_STARTED)
+  order       Int             @default(0)
+  tasks       Task[]
+}
+
+enum MilestoneStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETE
+}
+
+model Task {
+  id          String       @id @default(cuid())
+  projectId   String
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  milestoneId String?
+  milestone   Milestone?   @relation(fields: [milestoneId], references: [id])
+  featureId   String?
+  title       String
+  description String?
+  status      TaskStatus   @default(BACKLOG)
+  priority    TaskPriority @default(MEDIUM)
+  dueDate     DateTime?
+  completedAt DateTime?
+  createdAt   DateTime     @default(now())
+
+  @@index([projectId, status])
+}
+
+enum TaskStatus {
+  BACKLOG
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title     String?
+  content   String
+  pinned    Boolean  @default(false)
+  tags      String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
+}
+
+model AIConversation {
+  id        String      @id @default(cuid())
+  userId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId String?
+  project   Project?    @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  title     String?
+  messages  AIMessage[]
+  createdAt DateTime    @default(now())
+}
+
+model AIMessage {
+  id             String         @id @default(cuid())
+  conversationId String
+  conversation   AIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           AIRole
+  content        String
+  createdAt      DateTime       @default(now())
+}
+
+enum AIRole {
+  USER
+  ASSISTANT
+}
+
+model AIUsageLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  operation String
+  date      DateTime @default(now())
+
+  @@index([userId, date])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, read])
+}
