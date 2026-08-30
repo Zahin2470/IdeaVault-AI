@@ -1,7 +1,8 @@
 "use client";
 
-import { Star, Archive, ArchiveRestore, Trash2 } from "lucide-react";
+import { Star, Archive, ArchiveRestore, Trash2, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Idea } from "@prisma/client";
 
@@ -18,11 +19,21 @@ interface IdeaCardProps {
   onToggleFavorite: (idea: Idea) => void;
   onToggleArchive: (idea: Idea) => void;
   onDelete: (idea: Idea) => void;
+  onConvert: (idea: Idea) => void;
+  converting?: boolean;
 }
 
 // Card layout per §15: title, short description, category, status, tags,
-// last updated, favorite. Archive/restore/delete map to §41.
-export function IdeaCard({ idea, onToggleFavorite, onToggleArchive, onDelete }: IdeaCardProps) {
+// last updated, favorite. Archive/restore/delete map to §41. "Turn Into
+// Project" is §57 — idea → project conversion.
+export function IdeaCard({
+  idea,
+  onToggleFavorite,
+  onToggleArchive,
+  onDelete,
+  onConvert,
+  converting,
+}: IdeaCardProps) {
   const isArchived = idea.status === "ARCHIVED";
 
   return (
@@ -55,6 +66,19 @@ export function IdeaCard({ idea, onToggleFavorite, onToggleArchive, onDelete }: 
           </Badge>
         ))}
       </div>
+
+      {!isArchived && (
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => onConvert(idea)}
+          disabled={converting}
+          className="w-fit"
+        >
+          {converting ? "Creating project..." : "Turn Into Project"}
+          {!converting && <ArrowRight className="ml-1.5 h-3.5 w-3.5" />}
+        </Button>
+      )}
 
       <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
         <span>Updated {new Date(idea.updatedAt).toLocaleDateString()}</span>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import type { Idea } from "@prisma/client";
 import { CreateIdeaDialog } from "@/components/ideas/create-idea-dialog";
 import { IdeaFilters } from "@/components/ideas/idea-filters";
@@ -12,10 +13,12 @@ import type { IdeaFilter } from "@/lib/services/idea.service";
 // plumbing for a page this interactive and keeps favorite/archive/delete
 // optimistic-feeling without a full page reload.
 export default function IdeasPage() {
+  const router = useRouter();
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [filter, setFilter] = useState<IdeaFilter>("all");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [convertingId, setConvertingId] = useState<string | null>(null);
 
   const fetchIdeas = useCallback(async (f: IdeaFilter, s: string) => {
     setLoading(true);
@@ -65,6 +68,22 @@ export default function IdeasPage() {
     if (res.ok) setIdeas((prev) => prev.filter((i) => i.id !== idea.id));
   }
 
+  // §57 — idea → project conversion. Navigates straight into the new
+  // workspace rather than staying on the Idea Vault.
+  async function handleConvert(idea: Idea) {
+    setConvertingId(idea.id);
+    const res = await fetch("/api/projects", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ideaId: idea.id }),
+    });
+    setConvertingId(null);
+    if (res.ok) {
+      const { project } = await res.json();
+      router.push(`/projects/${project.id}`);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
@@ -100,6 +119,8 @@ export default function IdeasPage() {
                 patchIdea(i.id, { status: i.status === "ARCHIVED" ? "EXPLORING" : "ARCHIVED" } as Partial<Idea>)
               }
               onDelete={handleDelete}
+              onConvert={handleConvert}
+              converting={convertingId === idea.id}
             />
           ))}
         </div>
