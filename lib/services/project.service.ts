@@ -17,6 +17,7 @@ export async function getProject(userId: string, id: string) {
       audience: true,
       solution: true,
       features: { orderBy: { order: "asc" } },
+      mvpPlan: { include: { mvpFeatures: true } },
       _count: { select: { tasks: true } },
     },
   });

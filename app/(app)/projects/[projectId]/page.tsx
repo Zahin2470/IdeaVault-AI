@@ -21,6 +21,7 @@ export default async function ProjectOverviewPage({
     { label: "Target Audience", value: project.audience?.primaryAudience },
     { label: "Proposed Solution", value: project.solution?.description },
     { label: "Value Proposition", value: project.solution?.valueProp },
+    { label: "MVP Goal", value: project.mvpPlan?.goal },
   ];
 
   return (
