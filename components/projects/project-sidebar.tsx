@@ -4,9 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-// Workspace sub-nav (§58). Sections not yet built (MVP, Roadmap, Tasks,
-// Notes, AI) are shown per the spec's fixed nav but disabled, so the
-// full journey stays visible without linking to 404s before their phase lands.
+// Workspace sub-nav (§58) — every section is now live as of Phase 6.
 const LIVE_SECTIONS = [
   { href: "", label: "Overview" },
   { href: "/problem", label: "Problem" },
@@ -16,9 +14,9 @@ const LIVE_SECTIONS = [
   { href: "/mvp", label: "MVP" },
   { href: "/roadmap", label: "Roadmap" },
   { href: "/tasks", label: "Tasks" },
+  { href: "/notes", label: "Notes" },
+  { href: "/ai", label: "AI Copilot" },
 ];
-
-const UPCOMING_SECTIONS = ["Notes", "AI"];
 
 export function ProjectSidebar({ projectId }: { projectId: string }) {
   const pathname = usePathname();
@@ -42,17 +40,6 @@ export function ProjectSidebar({ projectId }: { projectId: string }) {
           </Link>
         );
       })}
-      <div className="mt-2 border-t border-border pt-2">
-        {UPCOMING_SECTIONS.map((label) => (
-          <div
-            key={label}
-            className="cursor-not-allowed rounded-md px-3 py-2 text-muted-foreground/50"
-            title="Coming in a later phase"
-          >
-            {label}
-          </div>
-        ))}
-      </div>
     </nav>
   );
 }
