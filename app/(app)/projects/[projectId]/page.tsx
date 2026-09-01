@@ -24,6 +24,9 @@ export default async function ProjectOverviewPage({
     { label: "MVP Goal", value: project.mvpPlan?.goal },
   ];
 
+  const totalTasks = project.tasks.length;
+  const doneTasks = project.tasks.filter((t) => t.status === "DONE").length;
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-3">
@@ -31,6 +34,11 @@ export default async function ProjectOverviewPage({
         <span className="text-sm text-muted-foreground">
           {project.features.length} feature{project.features.length === 1 ? "" : "s"}
         </span>
+        {totalTasks > 0 && (
+          <span className="text-sm text-muted-foreground">
+            {doneTasks}/{totalTasks} tasks done
+          </span>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

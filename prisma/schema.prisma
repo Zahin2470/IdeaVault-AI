@@ -247,7 +247,7 @@ model Task {
   projectId   String
   project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
   milestoneId String?
-  milestone   Milestone?   @relation(fields: [milestoneId], references: [id])
+  milestone   Milestone?   @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
   featureId   String?
   title       String
   description String?

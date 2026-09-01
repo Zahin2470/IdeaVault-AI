@@ -14,9 +14,11 @@ const LIVE_SECTIONS = [
   { href: "/solution", label: "Solution" },
   { href: "/features", label: "Features" },
   { href: "/mvp", label: "MVP" },
+  { href: "/roadmap", label: "Roadmap" },
+  { href: "/tasks", label: "Tasks" },
 ];
 
-const UPCOMING_SECTIONS = ["Roadmap", "Tasks", "Notes", "AI"];
+const UPCOMING_SECTIONS = ["Notes", "AI"];
 
 export function ProjectSidebar({ projectId }: { projectId: string }) {
   const pathname = usePathname();
