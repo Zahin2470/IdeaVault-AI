@@ -6,13 +6,22 @@ import type { ChatMessage } from "@/lib/ai/ai.types";
 // single constant is enough until usage patterns say otherwise.
 const DAILY_AI_LIMIT = 50;
 
-export async function checkAndLogUsage(userId: string, operation: string) {
+async function countUsageToday(userId: string) {
   const startOfDay = new Date();
   startOfDay.setHours(0, 0, 0, 0);
 
-  const count = await prisma.aIUsageLog.count({
-    where: { userId, date: { gte: startOfDay } },
-  });
+  return prisma.aIUsageLog.count({ where: { userId, date: { gte: startOfDay } } });
+}
+
+// Exposed separately from checkAndLogUsage so read-only callers (the
+// dashboard's "AI calls today" stat) don't need to fake an operation
+// name just to get a count.
+export async function getUsageToday(userId: string) {
+  return countUsageToday(userId);
+}
+
+export async function checkAndLogUsage(userId: string, operation: string) {
+  const count = await countUsageToday(userId);
 
   if (count >= DAILY_AI_LIMIT) return false;
 
