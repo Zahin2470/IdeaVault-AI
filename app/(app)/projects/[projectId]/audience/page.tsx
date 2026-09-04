@@ -2,6 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { EditableSection } from "@/components/projects/editable-section";
+import { AISuggestButton } from "@/components/ai/ai-suggest-button";
+
+interface AudienceProposal {
+  primaryAudience: string;
+  secondaryAudience: string;
+  painPoints: string[];
+}
 
 // painPoints is stored as a string[] in the DB; the textarea here uses
 // one line per pain point and we split/join at the boundary.
@@ -33,18 +40,39 @@ export default function AudiencePage({ params }: { params: { projectId: string }
     return res.ok;
   }
 
+  async function handleApprove(proposal: AudienceProposal) {
+    const joined = {
+      primaryAudience: proposal.primaryAudience,
+      secondaryAudience: proposal.secondaryAudience,
+      painPoints: proposal.painPoints.join("\n"),
+    };
+    setValues(joined);
+    await handleSave(joined);
+  }
+
   if (!values) return <p className="text-sm text-muted-foreground">Loading...</p>;
 
   return (
-    <EditableSection
-      title="Target Audience"
-      initialValues={values}
-      onSave={handleSave}
-      fields={[
-        { key: "primaryAudience", label: "Primary Audience", placeholder: "e.g. University students living on campus" },
-        { key: "secondaryAudience", label: "Secondary Audience", placeholder: "e.g. Parents, administrators, restaurants" },
-        { key: "painPoints", label: "User Pain Points (one per line)", placeholder: "One pain point per line" },
-      ]}
-    />
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-end">
+        <AISuggestButton<AudienceProposal>
+          projectId={params.projectId}
+          operation="improve_audience"
+          label="Improve with AI"
+          onApprove={handleApprove}
+        />
+      </div>
+      <EditableSection
+        key={JSON.stringify(values)}
+        title="Target Audience"
+        initialValues={values}
+        onSave={handleSave}
+        fields={[
+          { key: "primaryAudience", label: "Primary Audience", placeholder: "e.g. University students living on campus" },
+          { key: "secondaryAudience", label: "Secondary Audience", placeholder: "e.g. Parents, administrators, restaurants" },
+          { key: "painPoints", label: "User Pain Points (one per line)", placeholder: "One pain point per line" },
+        ]}
+      />
+    </div>
   );
 }
