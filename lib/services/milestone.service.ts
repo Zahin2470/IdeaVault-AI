@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db/prisma";
 import type { z } from "zod";
 import type { createMilestoneSchema, updateMilestoneSchema } from "@/lib/validations/roadmap";
+import { createNotificationOnce } from "@/lib/services/notification.service";
 
 type CreateMilestoneInput = z.infer<typeof createMilestoneSchema>;
 type UpdateMilestoneInput = z.infer<typeof updateMilestoneSchema>;
@@ -47,13 +48,29 @@ export async function updateMilestone(userId: string, milestoneId: string, data:
   const milestone = await getOwnedMilestone(userId, milestoneId);
   if (!milestone) return null;
 
-  return prisma.milestone.update({
+  const updated = await prisma.milestone.update({
     where: { id: milestoneId },
     data: {
       ...data,
       targetDate: data.targetDate ? new Date(data.targetDate) : data.targetDate === "" ? null : undefined,
     },
   });
+
+  // §29-style delivery: only fires on the transition into COMPLETE, and
+  // only if the user hasn't turned project notifications off.
+  if (data.status === "COMPLETE" && milestone.status !== "COMPLETE") {
+    const prefs = await prisma.userPreference.findUnique({ where: { userId } });
+    if (prefs?.notifyProject !== false) {
+      await createNotificationOnce(
+        userId,
+        "milestone_complete",
+        `Milestone "${updated.title}" completed in ${milestone.project.name}.`,
+        milestone.id
+      );
+    }
+  }
+
+  return updated;
 }
 
 export async function deleteMilestone(userId: string, milestoneId: string) {

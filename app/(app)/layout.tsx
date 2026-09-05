@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { GlobalSearch } from "@/components/search/global-search";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 
 // Base authenticated shell (§9, §58): sidebar + content area on desktop.
 // Individual sections (ideas, projects, ai, settings) fill the content slot.
@@ -39,13 +40,19 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         </div>
       </aside>
 
-      {/* Mobile: compact top bar in place of the sidebar (§8) */}
       <div className="flex min-h-screen flex-1 flex-col">
+        {/* Desktop top bar: just the bell, sidebar already carries nav + search */}
+        <header className="hidden h-14 items-center justify-end border-b border-border px-6 md:flex">
+          <NotificationBell />
+        </header>
+
+        {/* Mobile: compact top bar in place of the sidebar (§8) */}
         <header className="flex h-14 items-center gap-3 border-b border-border px-4 md:hidden">
           <span className="font-semibold">IdeaVault</span>
           <div className="flex-1">
             <GlobalSearch />
           </div>
+          <NotificationBell />
         </header>
         <main className="flex-1 p-6">{children}</main>
       </div>
