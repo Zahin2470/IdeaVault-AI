@@ -1,34 +1,24 @@
 import { prisma } from "@/lib/db/prisma";
 import type { z } from "zod";
 import type { createTaskSchema, updateTaskSchema } from "@/lib/validations/roadmap";
+import { canViewProject, canEditProject } from "@/lib/services/access.service";
 
 type CreateTaskInput = z.infer<typeof createTaskSchema>;
 type UpdateTaskInput = z.infer<typeof updateTaskSchema>;
 
-async function assertProjectOwnership(userId: string, projectId: string) {
-  const project = await prisma.project.findFirst({ where: { id: projectId, userId } });
-  return !!project;
-}
-
 async function getOwnedTask(userId: string, taskId: string) {
-  const task = await prisma.task.findUnique({
-    where: { id: taskId },
-    include: { project: true },
-  });
-  if (!task || task.project.userId !== userId) return null;
+  const task = await prisma.task.findUnique({ where: { id: taskId } });
+  if (!task || !(await canEditProject(userId, task.projectId))) return null;
   return task;
 }
 
 export async function listTasks(userId: string, projectId: string) {
-  if (!(await assertProjectOwnership(userId, projectId))) return null;
-  return prisma.task.findMany({
-    where: { projectId },
-    orderBy: { createdAt: "asc" },
-  });
+  if (!(await canViewProject(userId, projectId))) return null;
+  return prisma.task.findMany({ where: { projectId }, orderBy: { createdAt: "asc" } });
 }
 
 export async function createTask(userId: string, projectId: string, data: CreateTaskInput) {
-  if (!(await assertProjectOwnership(userId, projectId))) return null;
+  if (!(await canEditProject(userId, projectId))) return null;
 
   return prisma.task.create({
     data: {
@@ -44,8 +34,9 @@ export async function createTask(userId: string, projectId: string, data: Create
 }
 
 // §28 — moving a task to DONE stamps completedAt; moving it back out of
-// DONE clears it, so "% complete" (§37, later phases) stays accurate
-// regardless of how many times a task bounces between columns.
+// DONE clears it, so "% complete" stays accurate regardless of how many
+// times a task bounces between columns, and regardless of which
+// collaborator moved it.
 export async function updateTask(userId: string, taskId: string, data: UpdateTaskInput) {
   const task = await getOwnedTask(userId, taskId);
   if (!task) return null;
@@ -59,11 +50,7 @@ export async function updateTask(userId: string, taskId: string, data: UpdateTas
       milestoneId: data.milestoneId === "" ? null : data.milestoneId,
       featureId: data.featureId === "" ? null : data.featureId,
       dueDate: data.dueDate ? new Date(data.dueDate) : data.dueDate === "" ? null : undefined,
-      completedAt: statusChanging
-        ? data.status === "DONE"
-          ? new Date()
-          : null
-        : undefined,
+      completedAt: statusChanging ? (data.status === "DONE" ? new Date() : null) : undefined,
     },
   });
 }

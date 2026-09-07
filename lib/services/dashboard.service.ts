@@ -18,7 +18,7 @@ export async function getDashboardData(userId: string) {
     aiUsageToday,
   ] = await Promise.all([
     prisma.project.findMany({
-      where: { userId, status: { not: "COMPLETED" } },
+      where: { OR: [{ userId }, { members: { some: { userId } } }], status: { not: "COMPLETED" } },
       orderBy: { updatedAt: "desc" },
       take: 5,
       include: { _count: { select: { features: true, tasks: true } }, tasks: { select: { status: true } } },
@@ -29,16 +29,20 @@ export async function getDashboardData(userId: string) {
       take: 5,
     }),
     prisma.task.findMany({
-      where: { project: { userId }, dueDate: { not: null }, status: { not: "DONE" } },
+      where: {
+        project: { OR: [{ userId }, { members: { some: { userId } } }] },
+        dueDate: { not: null },
+        status: { not: "DONE" },
+      },
       orderBy: { dueDate: "asc" },
       take: 5,
       include: { project: { select: { id: true, name: true } } },
     }),
     prisma.idea.count({ where: { userId, status: { not: "ARCHIVED" } } }),
-    prisma.project.count({ where: { userId } }),
+    prisma.project.count({ where: { OR: [{ userId }, { members: { some: { userId } } }] } }),
     prisma.task.count({
       where: {
-        project: { userId },
+        project: { OR: [{ userId }, { members: { some: { userId } } }] },
         status: { not: "DONE" },
         dueDate: { gte: new Date(), lte: weekFromNow },
       },

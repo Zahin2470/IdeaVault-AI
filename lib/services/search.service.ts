@@ -1,14 +1,16 @@
 import { prisma } from "@/lib/db/prisma";
 
-// §39 — one query fan-out across the four searchable entity types, each
-// scoped to the current user (ideas/projects directly, tasks/notes via
-// their parent project). Capped at 5 per type — this is a quick-jump
-// palette, not a full search-results page.
+// §39 — one query fan-out across the four searchable entity types.
+// Ideas stay owner-only (never shared); projects/tasks/notes are scoped
+// to owned OR member-accessible projects, so a collaborator can find
+// what they've been given access to.
 const RESULT_LIMIT = 5;
 
 export async function searchAll(userId: string, query: string) {
   const q = query.trim();
   if (!q) return { ideas: [], projects: [], tasks: [], notes: [] };
+
+  const accessibleProject = { OR: [{ userId }, { members: { some: { userId } } }] };
 
   const [ideas, projects, tasks, notes] = await Promise.all([
     prisma.idea.findMany({
@@ -23,13 +25,13 @@ export async function searchAll(userId: string, query: string) {
       orderBy: { updatedAt: "desc" },
     }),
     prisma.project.findMany({
-      where: { userId, name: { contains: q, mode: "insensitive" } },
+      where: { ...accessibleProject, name: { contains: q, mode: "insensitive" } },
       take: RESULT_LIMIT,
       orderBy: { updatedAt: "desc" },
     }),
     prisma.task.findMany({
       where: {
-        project: { userId },
+        project: accessibleProject,
         OR: [
           { title: { contains: q, mode: "insensitive" } },
           { description: { contains: q, mode: "insensitive" } },
@@ -41,7 +43,7 @@ export async function searchAll(userId: string, query: string) {
     }),
     prisma.note.findMany({
       where: {
-        project: { userId },
+        project: accessibleProject,
         OR: [
           { title: { contains: q, mode: "insensitive" } },
           { content: { contains: q, mode: "insensitive" } },

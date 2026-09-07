@@ -16,6 +16,7 @@ const LIVE_SECTIONS = [
   { href: "/tasks", label: "Tasks" },
   { href: "/notes", label: "Notes" },
   { href: "/ai", label: "AI Copilot" },
+  { href: "/members", label: "Members" },
 ];
 
 export function ProjectSidebar({ projectId }: { projectId: string }) {

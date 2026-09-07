@@ -5,12 +5,16 @@ import type {
   AudienceInput,
   SolutionInput,
 } from "@/lib/services/project.types";
+import { canViewProject, canEditProject, isProjectOwner } from "@/lib/services/access.service";
 
-// Full workspace read — everything the Overview page (§18) and sub-nav
-// need in one round trip.
+// Any project member (owner, editor, or viewer) can read the full
+// workspace — collaboration means shared visibility, not shared
+// ownership.
 export async function getProject(userId: string, id: string) {
-  return prisma.project.findFirst({
-    where: { id, userId },
+  if (!(await canViewProject(userId, id))) return null;
+
+  return prisma.project.findUnique({
+    where: { id },
     include: {
       idea: true,
       problem: true,
@@ -24,17 +28,19 @@ export async function getProject(userId: string, id: string) {
   });
 }
 
+// Includes projects the user owns AND projects they've been added to as
+// a member, so a shared project shows up in the collaborator's list too.
 export async function listProjects(userId: string) {
   return prisma.project.findMany({
-    where: { userId },
+    where: { OR: [{ userId }, { members: { some: { userId } } }] },
     include: { _count: { select: { features: true, tasks: true } } },
     orderBy: { updatedAt: "desc" },
   });
 }
 
-// §57 — Idea → Project conversion. Preserves title; guides the user into
-// Problem/Audience/Solution/Features/MVP next. One idea can only become
-// one project (Idea.project is a unique back-relation).
+// §57 — Idea → Project conversion. Always creates the caller as owner;
+// converting someone else's idea isn't possible since ideas themselves
+// stay personal (never shared).
 export async function createProjectFromIdea(userId: string, ideaId: string) {
   const idea = await prisma.idea.findFirst({ where: { id: ideaId, userId } });
   if (!idea) return null;
@@ -43,39 +49,25 @@ export async function createProjectFromIdea(userId: string, ideaId: string) {
   if (existing) return existing;
 
   return prisma.project.create({
-    data: {
-      userId,
-      ideaId,
-      name: idea.title,
-    },
+    data: { userId, ideaId, name: idea.title },
   });
 }
 
+// Renaming/status changes and deletion are owner-only — editors can
+// change everything inside the project, but not the project itself.
 export async function updateProject(userId: string, id: string, data: UpdateProjectInput) {
-  const existing = await prisma.project.findFirst({ where: { id, userId } });
-  if (!existing) return null;
-
+  if (!(await isProjectOwner(userId, id))) return null;
   return prisma.project.update({ where: { id }, data });
 }
 
 export async function deleteProject(userId: string, id: string) {
-  const existing = await prisma.project.findFirst({ where: { id, userId } });
-  if (!existing) return null;
-
+  if (!(await isProjectOwner(userId, id))) return null;
   await prisma.project.delete({ where: { id } });
   return true;
 }
 
-async function assertOwnership(userId: string, projectId: string) {
-  const project = await prisma.project.findFirst({ where: { id: projectId, userId } });
-  return !!project;
-}
-
-// §19-21 — Problem/Audience/Solution are upserted, never created via a
-// separate "add section" step; the section simply starts empty.
 export async function upsertProblem(userId: string, projectId: string, data: ProblemInput) {
-  if (!(await assertOwnership(userId, projectId))) return null;
-
+  if (!(await canEditProject(userId, projectId))) return null;
   return prisma.projectProblem.upsert({
     where: { projectId },
     create: { projectId, ...data },
@@ -84,8 +76,7 @@ export async function upsertProblem(userId: string, projectId: string, data: Pro
 }
 
 export async function upsertAudience(userId: string, projectId: string, data: AudienceInput) {
-  if (!(await assertOwnership(userId, projectId))) return null;
-
+  if (!(await canEditProject(userId, projectId))) return null;
   return prisma.projectAudience.upsert({
     where: { projectId },
     create: { projectId, ...data },
@@ -94,8 +85,7 @@ export async function upsertAudience(userId: string, projectId: string, data: Au
 }
 
 export async function upsertSolution(userId: string, projectId: string, data: SolutionInput) {
-  if (!(await assertOwnership(userId, projectId))) return null;
-
+  if (!(await canEditProject(userId, projectId))) return null;
   return prisma.projectSolution.upsert({
     where: { projectId },
     create: { projectId, ...data },

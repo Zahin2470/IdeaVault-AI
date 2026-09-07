@@ -1,10 +1,13 @@
 import { prisma } from "@/lib/db/prisma";
 import type { ChatMessage } from "@/lib/ai/ai.types";
+import { hasActiveSubscription } from "@/lib/services/billing.service";
 
 // §50 — per-user daily cap on AI calls, enforced before the provider is
-// ever called (cost/abuse control). Not configurable per-user yet; a
-// single constant is enough until usage patterns say otherwise.
-const DAILY_AI_LIMIT = 50;
+// ever called (cost/abuse control). Pro subscribers (Phase 13) get a
+// higher ceiling rather than an unlimited one — still a real cap against
+// runaway cost, just a more generous one.
+const FREE_DAILY_AI_LIMIT = 50;
+const PRO_DAILY_AI_LIMIT = 500;
 
 async function countUsageToday(userId: string) {
   const startOfDay = new Date();
@@ -21,9 +24,10 @@ export async function getUsageToday(userId: string) {
 }
 
 export async function checkAndLogUsage(userId: string, operation: string) {
-  const count = await countUsageToday(userId);
+  const [count, isPro] = await Promise.all([countUsageToday(userId), hasActiveSubscription(userId)]);
+  const limit = isPro ? PRO_DAILY_AI_LIMIT : FREE_DAILY_AI_LIMIT;
 
-  if (count >= DAILY_AI_LIMIT) return false;
+  if (count >= limit) return false;
 
   await prisma.aIUsageLog.create({ data: { userId, operation } });
   return true;

@@ -66,6 +66,32 @@ model User {
   preferences     UserPreference?
   aiConversations AIConversation[]
   aiUsage         AIUsageLog[]
+  memberships     ProjectMember[]
+  sentInvites     ProjectInvite[] @relation("SentInvites")
+  subscription    Subscription?
+}
+
+// Phase 13 — Stripe billing. One subscription per user; free-tier users
+// simply have no row here rather than a row with a "FREE" status.
+model Subscription {
+  id                   String             @id @default(cuid())
+  userId               String             @unique
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stripeCustomerId     String
+  stripeSubscriptionId String             @unique
+  stripePriceId        String
+  status               SubscriptionStatus @default(INCOMPLETE)
+  currentPeriodEnd     DateTime
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  TRIALING
+  PAST_DUE
+  CANCELED
+  INCOMPLETE
 }
 
 model UserPreference {
@@ -129,8 +155,52 @@ model Project {
   tasks           Task[]
   notes           Note[]
   aiConversations AIConversation[]
+  members         ProjectMember[]
+  invites         ProjectInvite[]
 
   @@index([userId, status])
+}
+
+// Collaboration (Phase 12). The creator's authority always comes from
+// Project.userId — a ProjectMember row only ever represents someone
+// invited in afterward, so "owner" is never a MemberRole value.
+model ProjectMember {
+  id        String     @id @default(cuid())
+  projectId String
+  project   Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      MemberRole @default(VIEWER)
+  createdAt DateTime   @default(now())
+
+  @@unique([projectId, userId])
+}
+
+enum MemberRole {
+  EDITOR
+  VIEWER
+}
+
+model ProjectInvite {
+  id          String       @id @default(cuid())
+  projectId   String
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  email       String
+  role        MemberRole   @default(VIEWER)
+  token       String       @unique
+  status      InviteStatus @default(PENDING)
+  invitedById String
+  invitedBy   User         @relation("SentInvites", fields: [invitedById], references: [id], onDelete: Cascade)
+  createdAt   DateTime     @default(now())
+  expiresAt   DateTime
+
+  @@index([projectId, status])
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
 }
 
 enum ProjectStatus {

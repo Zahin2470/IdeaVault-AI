@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getConversation } from "@/lib/services/ai-conversation.service";
-import { prisma } from "@/lib/db/prisma";
+import { canViewProject } from "@/lib/services/access.service";
 
 // Loads existing history so the copilot doesn't reset on every page
 // visit. Returns { conversation: null } rather than 404 — no history yet
@@ -13,9 +13,8 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const projectId = searchParams.get("projectId");
 
-  if (projectId) {
-    const project = await prisma.project.findFirst({ where: { id: projectId, userId: user.id } });
-    if (!project) return NextResponse.json({ error: "Project not found" }, { status: 404 });
+  if (projectId && !(await canViewProject(user.id, projectId))) {
+    return NextResponse.json({ error: "Project not found" }, { status: 404 });
   }
 
   const conversation = await getConversation(user.id, projectId);

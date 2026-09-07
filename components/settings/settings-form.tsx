@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { BillingSection } from "@/components/settings/billing-section";
 
 interface SettingsFormProps {
   email: string;
@@ -140,6 +141,8 @@ export function SettingsForm({ email, aiProvider, initialProfile, initialPrefere
           Notify me about project activity
         </label>
       </section>
+
+      <BillingSection />
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold tracking-tight">Account</h2>

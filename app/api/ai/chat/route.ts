@@ -8,11 +8,12 @@ import {
   addMessage,
   toChatHistory,
 } from "@/lib/services/ai-conversation.service";
-import { prisma } from "@/lib/db/prisma";
+import { canViewProject } from "@/lib/services/access.service";
 
 // §35-36, §50 — the one endpoint both the global and per-project copilot
-// call. projectId is optional; when present, ownership is checked before
-// anything else touches the DB or the provider.
+// call. projectId is optional; when present, view access is checked
+// before anything else touches the DB or the provider — chatting about
+// a project is informational, so any member (including a VIEWER) can do it.
 export async function POST(req: Request) {
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -28,9 +29,8 @@ export async function POST(req: Request) {
 
   const { message, projectId } = parsed.data;
 
-  if (projectId) {
-    const project = await prisma.project.findFirst({ where: { id: projectId, userId: user.id } });
-    if (!project) return NextResponse.json({ error: "Project not found" }, { status: 404 });
+  if (projectId && !(await canViewProject(user.id, projectId))) {
+    return NextResponse.json({ error: "Project not found" }, { status: 404 });
   }
 
   const allowed = await checkAndLogUsage(user.id, "chat");

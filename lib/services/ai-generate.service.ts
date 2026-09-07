@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db/prisma";
 import { chat } from "@/lib/ai/ai.service";
 import { buildPrompt } from "@/lib/ai/prompts/generate";
 import { checkAndLogUsage } from "@/lib/services/ai-conversation.service";
+import { canEditProject } from "@/lib/services/access.service";
 import { PROPOSAL_SCHEMAS } from "@/lib/validations/ai-generate";
 import type { GENERATE_OPERATIONS } from "@/lib/validations/ai-generate";
 
@@ -13,14 +14,20 @@ export type GenerateResult =
 
 // §25, §34, §74 — AI never writes directly. This always returns a
 // proposal for the caller to show the user; only an explicit Approve
-// (handled by the existing PATCH routes) persists anything.
+// (handled by the existing PATCH routes) persists anything. Requires
+// edit access, not just view — generating a proposal is the first step
+// of a write, so a VIEWER shouldn't be able to trigger it.
 export async function generateProposal(
   userId: string,
   projectId: string,
   operation: Operation
 ): Promise<GenerateResult> {
-  const project = await prisma.project.findFirst({
-    where: { id: projectId, userId },
+  if (!(await canEditProject(userId, projectId))) {
+    return { ok: false, status: 404, error: "Project not found" };
+  }
+
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
     include: { idea: true, problem: true, audience: true, solution: true, features: true },
   });
   if (!project) return { ok: false, status: 404, error: "Project not found" };
