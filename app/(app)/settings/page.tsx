@@ -15,6 +15,7 @@ export default async function SettingsPage() {
       <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
       <SettingsForm
         email={settings.email}
+        emailVerified={settings.emailVerified}
         aiProvider={process.env.AI_PROVIDER ?? "gemini"}
         initialProfile={{ name: settings.name, bio: settings.bio ?? "" }}
         initialPreferences={{

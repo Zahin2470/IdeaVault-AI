@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db/prisma";
 import { registerSchema } from "@/lib/validations/auth";
+import { sendVerificationEmailFor } from "@/lib/services/email-verification.service";
 
 // Plain email/password registration (§12). Errors never leak internals
 // (§51) — validation failures return a clean message, everything else
@@ -30,7 +31,7 @@ export async function POST(req: Request) {
 
     const passwordHash = await bcrypt.hash(password, 10);
 
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         name,
         email,
@@ -38,6 +39,11 @@ export async function POST(req: Request) {
         preferences: { create: {} },
       },
     });
+
+    // Fire-and-forget in spirit, but awaited so a slow/failed send never
+    // blocks registration itself — the service already logs the link to
+    // console as a fallback when Resend isn't configured.
+    await sendVerificationEmailFor(user.id);
 
     return NextResponse.json({ success: true }, { status: 201 });
   } catch {

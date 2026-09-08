@@ -54,6 +54,9 @@ export default function LoginPage() {
           required
           className="h-10 rounded-md border border-border bg-transparent px-3 text-sm"
         />
+        <a href="/forgot-password" className="text-right text-xs text-accent">
+          Forgot password?
+        </a>
         {error && <p className="text-sm text-danger">{error}</p>}
         <Button type="submit" disabled={loading}>
           {loading ? "Signing in..." : "Sign in"}

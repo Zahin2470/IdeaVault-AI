@@ -15,7 +15,7 @@ export async function getSettings(userId: string) {
   const preferences =
     user.preferences ?? (await prisma.userPreference.create({ data: { userId } }));
 
-  return { name: user.name, email: user.email, bio: user.bio, preferences };
+  return { name: user.name, email: user.email, bio: user.bio, emailVerified: !!user.emailVerified, preferences };
 }
 
 export async function updateProfile(userId: string, data: ProfileInput) {

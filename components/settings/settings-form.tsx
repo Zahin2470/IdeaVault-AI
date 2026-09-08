@@ -10,6 +10,7 @@ import { BillingSection } from "@/components/settings/billing-section";
 
 interface SettingsFormProps {
   email: string;
+  emailVerified: boolean;
   aiProvider: string;
   initialProfile: { name: string; bio: string };
   initialPreferences: { theme: string; notifyTasks: boolean; notifyProject: boolean };
@@ -25,8 +26,17 @@ const THEME_OPTIONS = [
 // info. Theme changes apply immediately via next-themes (already handles
 // its own persistence) and are also saved to UserPreference so the
 // choice is recorded server-side, not just in this browser.
-export function SettingsForm({ email, aiProvider, initialProfile, initialPreferences }: SettingsFormProps) {
+export function SettingsForm({ email, emailVerified, aiProvider, initialProfile, initialPreferences }: SettingsFormProps) {
   const { setTheme } = useTheme();
+  const [resendingVerification, setResendingVerification] = useState(false);
+  const [verificationSent, setVerificationSent] = useState(false);
+
+  async function handleResendVerification() {
+    setResendingVerification(true);
+    await fetch("/api/auth/resend-verification", { method: "POST" });
+    setResendingVerification(false);
+    setVerificationSent(true);
+  }
 
   const [name, setName] = useState(initialProfile.name);
   const [bio, setBio] = useState(initialProfile.bio);
@@ -156,6 +166,22 @@ export function SettingsForm({ email, aiProvider, initialProfile, initialPrefere
             <span className="capitalize">{aiProvider} (free tier)</span>
           </div>
         </div>
+        {!emailVerified && (
+          <div className="flex items-center justify-between rounded-md border border-warning/30 bg-warning/5 p-3 text-sm">
+            <span className="text-muted-foreground">Your email isn&apos;t verified yet.</span>
+            {verificationSent ? (
+              <span className="text-xs text-muted-foreground">Sent — check your inbox</span>
+            ) : (
+              <button
+                onClick={handleResendVerification}
+                disabled={resendingVerification}
+                className="text-accent"
+              >
+                {resendingVerification ? "Sending..." : "Resend verification"}
+              </button>
+            )}
+          </div>
+        )}
       </section>
     </div>
   );
