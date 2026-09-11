@@ -22,6 +22,7 @@ interface MVPProposal {
   coreUsers: string;
   coreProblem: string;
   successCriteria: string[];
+  [key: string]: string | string[];
 }
 
 // §23-24 — MVP Planner: goal/core users/problem/success criteria, plus

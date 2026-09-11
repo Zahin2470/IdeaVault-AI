@@ -60,7 +60,7 @@ export function IdeaCard({
         <Badge variant={isArchived ? "default" : "accent"}>
           {STATUS_LABEL[idea.status] ?? idea.status}
         </Badge>
-        {idea.tags.map((tag) => (
+        {idea.tags.map((tag: string) => (
           <Badge key={tag} variant="default">
             {tag}
           </Badge>

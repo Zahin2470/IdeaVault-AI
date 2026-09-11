@@ -9,6 +9,7 @@ interface SolutionProposal {
   valueProp: string;
   keyBenefits: string[];
   differentiators: string[];
+  [key: string]: string | string[];
 }
 
 export default function SolutionPage({ params }: { params: { projectId: string } }) {

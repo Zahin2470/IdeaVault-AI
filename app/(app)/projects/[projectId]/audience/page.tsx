@@ -8,6 +8,7 @@ interface AudienceProposal {
   primaryAudience: string;
   secondaryAudience: string;
   painPoints: string[];
+  [key: string]: string | string[];
 }
 
 // painPoints is stored as a string[] in the DB; the textarea here uses

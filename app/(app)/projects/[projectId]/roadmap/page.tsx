@@ -18,7 +18,7 @@ export default async function RoadmapPage({ params }: { params: { projectId: str
       <h2 className="text-xl font-semibold tracking-tight">Roadmap</h2>
       <MilestoneList
         projectId={project.id}
-        initialMilestones={milestones.map((m) => ({
+        initialMilestones={milestones.map((m: { targetDate: Date | null; [key: string]: unknown }) => ({
           ...m,
           targetDate: m.targetDate ? m.targetDate.toISOString() : null,
         }))}

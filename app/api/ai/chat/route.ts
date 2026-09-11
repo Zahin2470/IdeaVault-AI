@@ -45,7 +45,7 @@ export async function POST(req: Request) {
   await addMessage(conversation.id, "USER", message);
 
   const history = toChatHistory([
-    ...conversation.messages.map((m) => ({ role: m.role, content: m.content })),
+    ...conversation.messages.map((m: { role: string; content: string }) => ({ role: m.role, content: m.content })),
     { role: "USER", content: message },
   ]);
 

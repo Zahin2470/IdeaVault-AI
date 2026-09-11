@@ -47,7 +47,14 @@ export default async function DashboardPage() {
           <EmptyRow text="No active projects yet." href="/ideas" cta="Go to Idea Vault" />
         ) : (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {activeProjects.map((p) => (
+            {activeProjects.map((p: {
+              id: string;
+              name: string;
+              status: string;
+              featureCount: number;
+              taskCount: number;
+              tasksDone: number;
+            }) => (
               <Link
                 key={p.id}
                 href={`/projects/${p.id}`}
@@ -74,7 +81,12 @@ export default async function DashboardPage() {
             <p className="text-sm text-muted-foreground">Nothing due soon.</p>
           ) : (
             <div className="flex flex-col divide-y divide-border rounded-lg border border-border">
-              {upcomingTasks.map((t) => (
+              {upcomingTasks.map((t: {
+                id: string;
+                title: string;
+                dueDate: Date | null;
+                project: { id: string; name: string };
+              }) => (
                 <Link
                   key={t.id}
                   href={`/projects/${t.project.id}/tasks`}
@@ -99,7 +111,7 @@ export default async function DashboardPage() {
             <EmptyRow text="No favorites yet." href="/ideas" cta="Go to Idea Vault" />
           ) : (
             <div className="flex flex-col divide-y divide-border rounded-lg border border-border">
-              {favoriteIdeas.map((idea) => (
+              {favoriteIdeas.map((idea: { id: string; title: string }) => (
                 <Link
                   key={idea.id}
                   href="/ideas"

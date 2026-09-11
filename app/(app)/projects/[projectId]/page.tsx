@@ -25,7 +25,7 @@ export default async function ProjectOverviewPage({
   ];
 
   const totalTasks = project.tasks.length;
-  const doneTasks = project.tasks.filter((t) => t.status === "DONE").length;
+  const doneTasks = project.tasks.filter((t: { status: string }) => t.status === "DONE").length;
 
   return (
     <div className="flex flex-col gap-6">

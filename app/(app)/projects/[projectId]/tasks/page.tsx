@@ -24,7 +24,7 @@ export default async function TasksPage({ params }: { params: { projectId: strin
         projectId={project.id}
         initialTasks={tasks ?? []}
         features={project.features}
-        milestones={(milestones ?? []).map((m) => ({ id: m.id, title: m.title }))}
+        milestones={(milestones ?? []).map((m: { id: string; title: string }) => ({ id: m.id, title: m.title }))}
       />
     </div>
   );

@@ -8,6 +8,7 @@ interface ProblemProposal {
   problem: string;
   alternatives: string;
   whyItMatters: string;
+  [key: string]: string;
 }
 
 export default function ProblemPage({ params }: { params: { projectId: string } }) {

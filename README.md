@@ -92,3 +92,12 @@ prisma/
 Phase 2 — Idea Vault: create/list/search/filter/favorite/archive ideas.
 Do not start Phase 2 until Phase 1 runs cleanly end-to-end (register →
 login → land on `/dashboard`).
+
+## Testing
+
+```bash
+npm run test        # run once
+npm run test:watch  # watch mode
+```
+
+Covers the two riskiest categories of bug: validation-schema edge cases (`lib/validations/*.test.ts`) and the project access-control logic (`lib/services/access.service.test.ts`) — every write path in the app funnels through `canViewProject`/`canEditProject`/`isProjectOwner`, so that's the highest-value thing to have pinned down with tests. Prisma-backed service functions aren't covered here since that needs a real (or test) database; the access-control tests mock the Prisma client directly to test the permission logic in isolation.

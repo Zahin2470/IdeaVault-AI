@@ -43,7 +43,7 @@ export async function generateProposal(
     problem: project.problem?.problem,
     audience: project.audience?.primaryAudience,
     solution: project.solution?.description,
-    featureNames: project.features.map((f) => f.name),
+    featureNames: project.features.map((f: { name: string }) => f.name),
   });
 
   let raw: string;

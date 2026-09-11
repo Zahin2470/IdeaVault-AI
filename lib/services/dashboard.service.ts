@@ -51,13 +51,19 @@ export async function getDashboardData(userId: string) {
   ]);
 
   return {
-    activeProjects: activeProjects.map((p) => ({
+    activeProjects: activeProjects.map((p: {
+      id: string;
+      name: string;
+      status: string;
+      _count: { features: number; tasks: number };
+      tasks: { status: string }[];
+    }) => ({
       id: p.id,
       name: p.name,
       status: p.status,
       featureCount: p._count.features,
       taskCount: p._count.tasks,
-      tasksDone: p.tasks.filter((t) => t.status === "DONE").length,
+      tasksDone: p.tasks.filter((t: { status: string }) => t.status === "DONE").length,
     })),
     favoriteIdeas,
     upcomingTasks,
