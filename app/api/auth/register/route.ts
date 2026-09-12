@@ -3,12 +3,22 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db/prisma";
 import { registerSchema } from "@/lib/validations/auth";
 import { sendVerificationEmailFor } from "@/lib/services/email-verification.service";
+import { checkRateLimit, getClientIp } from "@/lib/services/rate-limit.service";
 
 // Plain email/password registration (§12). Errors never leak internals
 // (§51) — validation failures return a clean message, everything else
 // collapses to a generic one.
 export async function POST(req: Request) {
   try {
+    const ip = getClientIp(req);
+    const allowed = await checkRateLimit(`register:ip:${ip}`, 5, 60 * 60 * 1000); // 5/hour/IP
+    if (!allowed) {
+      return NextResponse.json(
+        { error: "Too many accounts created from this network recently. Please try again later." },
+        { status: 429 }
+      );
+    }
+
     const body = await req.json();
     const parsed = registerSchema.safeParse(body);
 

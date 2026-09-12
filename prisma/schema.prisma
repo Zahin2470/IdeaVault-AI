@@ -44,6 +44,20 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+// Phase 16 — DB-backed rate limiting for public, unauthenticated
+// endpoints (login, register, forgot-password). No Redis dependency —
+// this reuses the Postgres connection the app already needs, at the
+// cost of being a bit heavier per-check than an in-memory store. Each
+// check opportunistically deletes its own expired rows, so this table
+// self-cleans rather than growing unbounded.
+model RateLimitAttempt {
+  id        String   @id @default(cuid())
+  key       String
+  createdAt DateTime @default(now())
+
+  @@index([key, createdAt])
+}
+
 // ---------- Core domain models ----------
 
 model User {
