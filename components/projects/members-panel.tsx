@@ -114,6 +114,7 @@ export function MembersPanel({ projectId }: { projectId: string }) {
                 {data.isOwner && (
                   <button
                     onClick={() => handleRemove(m.user.id)}
+                    aria-label={`Remove ${m.user.name} from project`}
                     className="text-muted-foreground hover:text-danger"
                   >
                     <Trash2 className="h-3.5 w-3.5" />

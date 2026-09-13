@@ -85,10 +85,18 @@ export function NoteList({ projectId, initialNotes }: NoteListProps) {
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span>{new Date(note.updatedAt).toLocaleDateString()}</span>
                 <div className="flex items-center gap-2">
-                  <button onClick={() => togglePin(note)} className="hover:text-foreground">
+                  <button
+                    onClick={() => togglePin(note)}
+                    aria-label={note.pinned ? "Unpin note" : "Pin note"}
+                    className="hover:text-foreground"
+                  >
                     {note.pinned ? <PinOff className="h-3.5 w-3.5" /> : <Pin className="h-3.5 w-3.5" />}
                   </button>
-                  <button onClick={() => handleDelete(note.id)} className="hover:text-danger">
+                  <button
+                    onClick={() => handleDelete(note.id)}
+                    aria-label="Delete note"
+                    className="hover:text-danger"
+                  >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
                 </div>

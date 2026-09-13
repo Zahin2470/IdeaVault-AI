@@ -102,6 +102,7 @@ export function ChatPanel({ projectId, emptyStateText }: ChatPanelProps) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask your AI copilot..."
+          aria-label="Message"
           className="min-h-10 flex-1"
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
@@ -110,7 +111,7 @@ export function ChatPanel({ projectId, emptyStateText }: ChatPanelProps) {
             }
           }}
         />
-        <Button type="submit" disabled={sending || !input.trim()} size="icon">
+        <Button type="submit" disabled={sending || !input.trim()} size="icon" aria-label="Send message">
           <Send className="h-4 w-4" />
         </Button>
       </form>

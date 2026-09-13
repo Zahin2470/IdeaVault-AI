@@ -125,6 +125,7 @@ export function MilestoneList({ projectId, initialMilestones }: MilestoneListPro
                     </select>
                     <button
                       onClick={() => handleDelete(m.id)}
+                      aria-label={`Delete milestone ${m.title}`}
                       className="text-muted-foreground hover:text-danger"
                     >
                       <Trash2 className="h-4 w-4" />

@@ -81,6 +81,7 @@ export function GlobalSearch() {
             <Input
               autoFocus
               placeholder="Search ideas, projects, tasks, notes..."
+              aria-label="Search ideas, projects, tasks, notes"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="border-0 px-0 focus-visible:ring-0"

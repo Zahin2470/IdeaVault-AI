@@ -85,6 +85,7 @@ export function TaskBoard({ projectId, initialTasks, features, milestones }: Tas
                       <p className="text-sm font-medium leading-snug">{task.title}</p>
                       <button
                         onClick={() => handleDelete(task.id)}
+                        aria-label={`Delete task ${task.title}`}
                         className="shrink-0 text-muted-foreground hover:text-danger"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -107,6 +108,7 @@ export function TaskBoard({ projectId, initialTasks, features, milestones }: Tas
                       <button
                         onClick={() => moveTask(task, -1)}
                         disabled={status === TASK_STATUSES[0]}
+                        aria-label={`Move ${task.title} to previous column`}
                         className="text-muted-foreground hover:text-foreground disabled:opacity-20"
                       >
                         <ArrowLeft className="h-3.5 w-3.5" />
@@ -114,6 +116,7 @@ export function TaskBoard({ projectId, initialTasks, features, milestones }: Tas
                       <button
                         onClick={() => moveTask(task, 1)}
                         disabled={status === TASK_STATUSES[TASK_STATUSES.length - 1]}
+                        aria-label={`Move ${task.title} to next column`}
                         className="text-muted-foreground hover:text-foreground disabled:opacity-20"
                       >
                         <ArrowRight className="h-3.5 w-3.5" />

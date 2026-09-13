@@ -112,6 +112,7 @@ export function FeatureList({ projectId, initialFeatures }: FeatureListProps) {
                 <button
                   onClick={() => move(i, -1)}
                   disabled={i === 0}
+                  aria-label={`Move ${f.name} up`}
                   className="text-muted-foreground hover:text-foreground disabled:opacity-30"
                 >
                   <ArrowUp className="h-3.5 w-3.5" />
@@ -119,6 +120,7 @@ export function FeatureList({ projectId, initialFeatures }: FeatureListProps) {
                 <button
                   onClick={() => move(i, 1)}
                   disabled={i === features.length - 1}
+                  aria-label={`Move ${f.name} down`}
                   className="text-muted-foreground hover:text-foreground disabled:opacity-30"
                 >
                   <ArrowDown className="h-3.5 w-3.5" />
@@ -162,6 +164,7 @@ export function FeatureList({ projectId, initialFeatures }: FeatureListProps) {
 
               <button
                 onClick={() => handleDelete(f.id)}
+                aria-label={`Delete ${f.name}`}
                 className="text-muted-foreground hover:text-danger"
               >
                 <Trash2 className="h-4 w-4" />
