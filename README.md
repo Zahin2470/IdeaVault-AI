@@ -101,3 +101,40 @@ npm run test:watch  # watch mode
 ```
 
 Covers the two riskiest categories of bug: validation-schema edge cases (`lib/validations/*.test.ts`) and the project access-control logic (`lib/services/access.service.test.ts`) — every write path in the app funnels through `canViewProject`/`canEditProject`/`isProjectOwner`, so that's the highest-value thing to have pinned down with tests. Prisma-backed service functions aren't covered here since that needs a real (or test) database; the access-control tests mock the Prisma client directly to test the permission logic in isolation.
+
+## Deployment (Vercel)
+
+This repo is set up for Vercel specifically — `vercel.json` already configures the due-task reminder cron, and `next.config.mjs` needs no changes.
+
+1. **Push to GitHub** and import the repo in Vercel.
+
+2. **Provision Postgres.** Any managed Postgres works (Vercel Postgres, Neon, Supabase all have usable free tiers) — grab its connection string for `DATABASE_URL`.
+
+3. **Set environment variables** in the Vercel project settings — everything from `.env.example`, with production values:
+   - `DATABASE_URL` — your production Postgres connection string
+   - `AUTH_SECRET` — `openssl rand -base64 32`
+   - `NEXTAUTH_URL` / `NEXT_PUBLIC_APP_URL` — your production domain (`https://yourapp.vercel.app` or custom domain)
+   - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` — if using Google sign-in, add the production callback URL (`https://yourdomain/api/auth/callback/google`) in the Google Cloud Console
+   - `AI_PROVIDER` / `AI_API_KEY` — Gemini free-tier key
+   - `STRIPE_SECRET_KEY` / `STRIPE_PRICE_ID` — use **live** keys, not test, for a real deployment
+   - `STRIPE_WEBHOOK_SECRET` — create a webhook endpoint in the Stripe Dashboard pointing at `https://yourdomain/api/billing/webhook`, subscribed to `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted` — Stripe gives you this secret when you create it
+   - `RESEND_API_KEY` / `EMAIL_FROM` — for real password-reset/verification emails, verify your own sending domain in Resend rather than using `onboarding@resend.dev` in production
+   - `CRON_SECRET` — `openssl rand -base64 32`, then Vercel's Cron feature sends this automatically once set
+
+4. **Override the build command** in Vercel's project settings to:
+   ```
+   npm run vercel-build
+   ```
+   This runs `prisma migrate deploy` before `next build`, so schema changes apply automatically on every deploy. This is different from `db:push` (used in local dev) — production should always go through real migrations, not schema push, so changes are tracked and reversible.
+
+   Before your first deploy, generate an actual migration locally (this repo has only used `db push` so far, so there's no migration history yet):
+   ```bash
+   npm run db:migrate   # creates prisma/migrations/ from the current schema
+   ```
+   Commit the generated `prisma/migrations/` folder — `vercel-build` needs it to run `migrate deploy`.
+
+5. **Deploy.** Vercel Cron picks up `vercel.json` automatically once `CRON_SECRET` is set.
+
+## Continuous Integration
+
+`.github/workflows/ci.yml` runs on every push/PR to `main`: install → generate Prisma client → typecheck → lint → test → build. All with placeholder env values — nothing in CI touches a real database, Stripe account, or AI provider.

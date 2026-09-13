@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth/session";
 import { GlobalSearch } from "@/components/search/global-search";
 import { NotificationBell } from "@/components/notifications/notification-bell";
@@ -20,23 +21,23 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           <GlobalSearch />
         </div>
         <nav className="flex flex-1 flex-col gap-1 px-3 text-sm">
-          <a href="/dashboard" className="rounded-md px-3 py-2 hover:bg-muted">
+          <Link href="/dashboard" className="rounded-md px-3 py-2 hover:bg-muted">
             Dashboard
-          </a>
-          <a href="/ideas" className="rounded-md px-3 py-2 hover:bg-muted">
+          </Link>
+          <Link href="/ideas" className="rounded-md px-3 py-2 hover:bg-muted">
             My Ideas
-          </a>
-          <a href="/projects" className="rounded-md px-3 py-2 hover:bg-muted">
+          </Link>
+          <Link href="/projects" className="rounded-md px-3 py-2 hover:bg-muted">
             Projects
-          </a>
-          <a href="/ai" className="rounded-md px-3 py-2 hover:bg-muted">
+          </Link>
+          <Link href="/ai" className="rounded-md px-3 py-2 hover:bg-muted">
             AI Copilot
-          </a>
+          </Link>
         </nav>
         <div className="border-t border-border px-3 py-3 text-sm">
-          <a href="/settings" className="block rounded-md px-3 py-2 hover:bg-muted">
+          <Link href="/settings" className="block rounded-md px-3 py-2 hover:bg-muted">
             Settings
-          </a>
+          </Link>
         </div>
       </aside>
 
