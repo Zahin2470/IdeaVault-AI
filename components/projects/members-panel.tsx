@@ -134,6 +134,7 @@ export function MembersPanel({ projectId }: { projectId: string }) {
               <Input
                 type="email"
                 placeholder="Email address"
+                aria-label="Email address to invite"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -142,6 +143,7 @@ export function MembersPanel({ projectId }: { projectId: string }) {
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
+                aria-label="Role"
                 className="h-10 rounded-md border border-border bg-transparent px-3 text-sm"
               >
                 {MEMBER_ROLES.map((r) => (

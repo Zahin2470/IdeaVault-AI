@@ -88,6 +88,7 @@ export function CreateIdeaDialog({ onCreated }: CreateIdeaDialogProps) {
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <Input
             placeholder="Idea title"
+            aria-label="Idea title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
@@ -95,12 +96,14 @@ export function CreateIdeaDialog({ onCreated }: CreateIdeaDialogProps) {
           />
           <Textarea
             placeholder="Short description (optional)"
+            aria-label="Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
+            aria-label="Category"
             className="h-10 rounded-md border border-border bg-transparent px-3 text-sm"
           >
             <option value="">Category (optional)</option>
@@ -112,6 +115,7 @@ export function CreateIdeaDialog({ onCreated }: CreateIdeaDialogProps) {
           </select>
           <Input
             placeholder="Tags, comma separated (optional)"
+            aria-label="Tags, comma separated"
             value={tagsInput}
             onChange={(e) => setTagsInput(e.target.value)}
           />

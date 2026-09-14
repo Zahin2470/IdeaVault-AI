@@ -36,17 +36,23 @@ export function EditableSection({ title, fields, initialValues, onSave }: Editab
   return (
     <div className="flex flex-col gap-5">
       <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
-      {fields.map((f) => (
-        <div key={f.key} className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium">{f.label}</label>
-          <Textarea
-            placeholder={f.placeholder}
-            value={values[f.key] ?? ""}
-            onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
-            className="min-h-28"
-          />
-        </div>
-      ))}
+      {fields.map((f) => {
+        const fieldId = `${title.toLowerCase().replace(/\s+/g, "-")}-${f.key}`;
+        return (
+          <div key={f.key} className="flex flex-col gap-1.5">
+            <label htmlFor={fieldId} className="text-sm font-medium">
+              {f.label}
+            </label>
+            <Textarea
+              id={fieldId}
+              placeholder={f.placeholder}
+              value={values[f.key] ?? ""}
+              onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
+              className="min-h-28"
+            />
+          </div>
+        );
+      })}
       <div className="flex items-center gap-3">
         <Button onClick={handleSave} disabled={saving} className="w-fit">
           {saving ? "Saving..." : "Save"}

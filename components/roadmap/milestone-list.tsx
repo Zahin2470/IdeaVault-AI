@@ -79,12 +79,14 @@ export function MilestoneList({ projectId, initialMilestones }: MilestoneListPro
       <form onSubmit={handleAdd} className="flex flex-wrap gap-2">
         <Input
           placeholder="Milestone title"
+          aria-label="Milestone title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           className="flex-1"
         />
         <Input
           type="date"
+          aria-label="Target date"
           value={targetDate}
           onChange={(e) => setTargetDate(e.target.value)}
           className="w-40"
@@ -115,6 +117,7 @@ export function MilestoneList({ projectId, initialMilestones }: MilestoneListPro
                     <select
                       value={m.status}
                       onChange={(e) => updateStatus(m.id, e.target.value)}
+                      aria-label={`Status for ${m.title}`}
                       className="h-8 rounded-md border border-border bg-transparent px-2 text-xs"
                     >
                       {MILESTONE_STATUSES.map((s) => (

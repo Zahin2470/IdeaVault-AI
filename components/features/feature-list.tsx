@@ -94,6 +94,7 @@ export function FeatureList({ projectId, initialFeatures }: FeatureListProps) {
       <form onSubmit={handleAdd} className="flex gap-2">
         <Input
           placeholder="Add a feature..."
+          aria-label="New feature name"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
@@ -137,6 +138,7 @@ export function FeatureList({ projectId, initialFeatures }: FeatureListProps) {
               <select
                 value={f.priority}
                 onChange={(e) => patchFeature(f.id, { priority: e.target.value as Feature["priority"] })}
+                aria-label={`Priority for ${f.name}`}
                 className="h-8 rounded-md border border-border bg-transparent px-2 text-xs"
               >
                 {FEATURE_PRIORITIES.map((p) => (
@@ -149,6 +151,7 @@ export function FeatureList({ projectId, initialFeatures }: FeatureListProps) {
               <select
                 value={f.status}
                 onChange={(e) => patchFeature(f.id, { status: e.target.value as Feature["status"] })}
+                aria-label={`Status for ${f.name}`}
                 className="h-8 rounded-md border border-border bg-transparent px-2 text-xs"
               >
                 {FEATURE_STATUSES.map((s) => (

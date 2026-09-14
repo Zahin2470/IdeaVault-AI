@@ -35,7 +35,11 @@ export default function ForgotPasswordPage() {
         </p>
       ) : (
         <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-3">
+          <label htmlFor="email" className="sr-only">
+            Email
+          </label>
           <input
+            id="email"
             type="email"
             placeholder="Email"
             value={email}

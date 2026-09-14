@@ -61,6 +61,7 @@ export function NoteList({ projectId, initialNotes }: NoteListProps) {
       <form onSubmit={handleAdd} className="flex flex-col gap-2">
         <Textarea
           placeholder="Jot something down..."
+          aria-label="Note content"
           value={content}
           onChange={(e) => setContent(e.target.value)}
         />

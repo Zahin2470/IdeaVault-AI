@@ -82,6 +82,7 @@ export function CreateTaskDialog({ projectId, features, milestones, onCreated }:
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <Input
             placeholder="Task title"
+            aria-label="Task title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
@@ -89,12 +90,14 @@ export function CreateTaskDialog({ projectId, features, milestones, onCreated }:
           />
           <Textarea
             placeholder="Description (optional)"
+            aria-label="Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
           <select
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
+            aria-label="Priority"
             className="h-10 rounded-md border border-border bg-transparent px-3 text-sm"
           >
             {TASK_PRIORITIES.map((p) => (
@@ -107,6 +110,7 @@ export function CreateTaskDialog({ projectId, features, milestones, onCreated }:
             <select
               value={featureId}
               onChange={(e) => setFeatureId(e.target.value)}
+              aria-label="Linked feature"
               className="h-10 rounded-md border border-border bg-transparent px-3 text-sm"
             >
               <option value="">Link to feature (optional)</option>
@@ -121,6 +125,7 @@ export function CreateTaskDialog({ projectId, features, milestones, onCreated }:
             <select
               value={milestoneId}
               onChange={(e) => setMilestoneId(e.target.value)}
+              aria-label="Linked milestone"
               className="h-10 rounded-md border border-border bg-transparent px-3 text-sm"
             >
               <option value="">Link to milestone (optional)</option>
@@ -131,7 +136,12 @@ export function CreateTaskDialog({ projectId, features, milestones, onCreated }:
               ))}
             </select>
           )}
-          <Input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
+          <Input
+            type="date"
+            aria-label="Due date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+          />
           <Button type="submit" disabled={loading || !title.trim()}>
             {loading ? "Adding..." : "Add Task"}
           </Button>

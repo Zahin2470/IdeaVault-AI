@@ -58,7 +58,11 @@ export default function ResetPasswordPage() {
     <div className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-4">
       <h1 className="text-2xl font-semibold tracking-tight">Set a new password</h1>
       <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-3">
+        <label htmlFor="new-password" className="sr-only">
+          New password
+        </label>
         <input
+          id="new-password"
           type="password"
           placeholder="New password"
           value={password}
@@ -67,7 +71,11 @@ export default function ResetPasswordPage() {
           minLength={8}
           className="h-10 rounded-md border border-border bg-transparent px-3 text-sm"
         />
+        <label htmlFor="confirm-password" className="sr-only">
+          Confirm new password
+        </label>
         <input
+          id="confirm-password"
           type="password"
           placeholder="Confirm new password"
           value={confirm}

@@ -40,7 +40,11 @@ export default function RegisterPage() {
     <div className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-4">
       <h1 className="text-2xl font-semibold tracking-tight">Create your account</h1>
       <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-3">
+        <label htmlFor="name" className="sr-only">
+          Name
+        </label>
         <input
+          id="name"
           type="text"
           placeholder="Name"
           value={name}
@@ -48,7 +52,11 @@ export default function RegisterPage() {
           required
           className="h-10 rounded-md border border-border bg-transparent px-3 text-sm"
         />
+        <label htmlFor="email" className="sr-only">
+          Email
+        </label>
         <input
+          id="email"
           type="email"
           placeholder="Email"
           value={email}
@@ -56,7 +64,11 @@ export default function RegisterPage() {
           required
           className="h-10 rounded-md border border-border bg-transparent px-3 text-sm"
         />
+        <label htmlFor="password" className="sr-only">
+          Password
+        </label>
         <input
+          id="password"
           type="password"
           placeholder="Password"
           value={password}

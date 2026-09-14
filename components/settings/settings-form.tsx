@@ -90,12 +90,17 @@ export function SettingsForm({ email, emailVerified, aiProvider, initialProfile,
         <h2 className="text-lg font-semibold tracking-tight">Profile</h2>
         <form onSubmit={handleSaveProfile} className="flex flex-col gap-3">
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">Name</label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} required />
+            <label htmlFor="settings-name" className="text-sm font-medium">
+              Name
+            </label>
+            <Input id="settings-name" value={name} onChange={(e) => setName(e.target.value)} required />
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">Bio</label>
+            <label htmlFor="settings-bio" className="text-sm font-medium">
+              Bio
+            </label>
             <Textarea
+              id="settings-bio"
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               placeholder="A short line about you (optional)"
