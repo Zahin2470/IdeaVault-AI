@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -25,38 +24,39 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-4">
-      <h1 className="text-2xl font-semibold tracking-tight">Reset your password</h1>
+    <div className="auth-card">
+      <div className="auth-card-head auth-mono">ACCOUNT · RECOVERY</div>
+      <h1 className="auth-title auth-display">Reset your password</h1>
 
       {sent ? (
-        <p className="mt-4 text-sm text-muted-foreground">
+        <p className="auth-note">
           If an account exists for <strong>{email}</strong>, we&apos;ve sent a password reset link.
           Check your inbox.
         </p>
       ) : (
-        <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-3">
-          <label htmlFor="email" className="sr-only">
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="h-10 rounded-md border border-border bg-transparent px-3 text-sm"
-          />
-          <Button type="submit" disabled={loading}>
+        <form onSubmit={handleSubmit}>
+          <div className="auth-field">
+            <label htmlFor="email" className="auth-label auth-mono">
+              EMAIL
+            </label>
+            <input
+              id="email"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="auth-input"
+            />
+          </div>
+          <button type="submit" disabled={loading} className="auth-btn-primary">
             {loading ? "Sending..." : "Send reset link"}
-          </Button>
+          </button>
         </form>
       )}
 
-      <p className="mt-4 text-sm text-muted-foreground">
-        <a href="/login" className="text-accent">
-          Back to sign in
-        </a>
+      <p className="auth-footer-text">
+        <a href="/login">Back to sign in</a>
       </p>
     </div>
   );

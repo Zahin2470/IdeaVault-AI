@@ -3,10 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 
-// Minimal functional login form. Styling/polish per §6/§7 lands in
-// Phase 8; Phase 1 just needs a real, working credentials + Google flow.
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -35,53 +32,61 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-4">
-      <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
-      <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-3">
-        <label htmlFor="email" className="sr-only">
-          Email
-        </label>
-        <input
-          id="email"
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="h-10 rounded-md border border-border bg-transparent px-3 text-sm"
-        />
-        <label htmlFor="password" className="sr-only">
-          Password
-        </label>
-        <input
-          id="password"
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="h-10 rounded-md border border-border bg-transparent px-3 text-sm"
-        />
-        <a href="/forgot-password" className="text-right text-xs text-accent">
+    <div className="auth-card">
+      <div className="auth-card-head auth-mono">ACCOUNT · SIGN IN</div>
+      <h1 className="auth-title auth-display">Welcome back</h1>
+
+      <form onSubmit={handleSubmit}>
+        <div className="auth-field">
+          <label htmlFor="email" className="auth-label auth-mono">
+            EMAIL
+          </label>
+          <input
+            id="email"
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="auth-input"
+          />
+        </div>
+
+        <div className="auth-field">
+          <label htmlFor="password" className="auth-label auth-mono">
+            PASSWORD
+          </label>
+          <input
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="auth-input"
+          />
+        </div>
+
+        <a href="/forgot-password" className="auth-forgot-link">
           Forgot password?
         </a>
-        {error && <p className="text-sm text-danger">{error}</p>}
-        <Button type="submit" disabled={loading}>
+
+        {error && <p className="auth-error">{error}</p>}
+
+        <button type="submit" disabled={loading} className="auth-btn-primary">
           {loading ? "Signing in..." : "Sign in"}
-        </Button>
+        </button>
       </form>
-      <Button
-        variant="outline"
-        className="mt-3"
+
+      <button
         onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+        className="auth-btn-secondary"
       >
         Continue with Google
-      </Button>
-      <p className="mt-4 text-sm text-muted-foreground">
-        No account?{" "}
-        <a href="/register" className="text-accent">
-          Register
-        </a>
+      </button>
+
+      <p className="auth-footer-text">
+        No account? <a href="/register">Register</a>
       </p>
     </div>
   );

@@ -2,10 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 
-// Calls POST /api/auth/register (added alongside the other Phase-1
-// auth routes). After success, sends the user into onboarding (§12).
+// Calls POST /api/auth/register. After success, sends the user into login.
 export default function RegisterPage() {
   const router = useRouter();
   const [name, setName] = useState("");
@@ -37,56 +35,66 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-4">
-      <h1 className="text-2xl font-semibold tracking-tight">Create your account</h1>
-      <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-3">
-        <label htmlFor="name" className="sr-only">
-          Name
-        </label>
-        <input
-          id="name"
-          type="text"
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-          className="h-10 rounded-md border border-border bg-transparent px-3 text-sm"
-        />
-        <label htmlFor="email" className="sr-only">
-          Email
-        </label>
-        <input
-          id="email"
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="h-10 rounded-md border border-border bg-transparent px-3 text-sm"
-        />
-        <label htmlFor="password" className="sr-only">
-          Password
-        </label>
-        <input
-          id="password"
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          minLength={8}
-          className="h-10 rounded-md border border-border bg-transparent px-3 text-sm"
-        />
-        {error && <p className="text-sm text-danger">{error}</p>}
-        <Button type="submit" disabled={loading}>
+    <div className="auth-card">
+      <div className="auth-card-head auth-mono">ACCOUNT · NEW</div>
+      <h1 className="auth-title auth-display">Create your account</h1>
+
+      <form onSubmit={handleSubmit}>
+        <div className="auth-field">
+          <label htmlFor="name" className="auth-label auth-mono">
+            NAME
+          </label>
+          <input
+            id="name"
+            type="text"
+            placeholder="Ada Lovelace"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            className="auth-input"
+          />
+        </div>
+
+        <div className="auth-field">
+          <label htmlFor="email" className="auth-label auth-mono">
+            EMAIL
+          </label>
+          <input
+            id="email"
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="auth-input"
+          />
+        </div>
+
+        <div className="auth-field">
+          <label htmlFor="password" className="auth-label auth-mono">
+            PASSWORD
+          </label>
+          <input
+            id="password"
+            type="password"
+            placeholder="At least 8 characters"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            minLength={8}
+            className="auth-input"
+          />
+        </div>
+
+        {error && <p className="auth-error">{error}</p>}
+
+        <button type="submit" disabled={loading} className="auth-btn-primary">
           {loading ? "Creating account..." : "Create account"}
-        </Button>
+        </button>
       </form>
-      <p className="mt-4 text-sm text-muted-foreground">
-        Already have an account?{" "}
-        <a href="/login" className="text-accent">
-          Sign in
-        </a>
+
+      <p className="auth-footer-text">
+        Already have an account? <a href="/login">Sign in</a>
       </p>
     </div>
   );

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -42,10 +41,11 @@ export default function ResetPasswordPage() {
 
   if (!token) {
     return (
-      <div className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-4 text-center">
-        <p className="text-sm text-muted-foreground">
+      <div className="auth-card">
+        <div className="auth-card-head auth-mono">ACCOUNT · RECOVERY</div>
+        <p className="auth-note">
           This link is missing its reset token. Please request a new one from{" "}
-          <a href="/forgot-password" className="text-accent">
+          <a href="/forgot-password" style={{ color: "var(--auth-cyan)" }}>
             the reset page
           </a>
           .
@@ -55,39 +55,48 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-4">
-      <h1 className="text-2xl font-semibold tracking-tight">Set a new password</h1>
-      <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-3">
-        <label htmlFor="new-password" className="sr-only">
-          New password
-        </label>
-        <input
-          id="new-password"
-          type="password"
-          placeholder="New password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          minLength={8}
-          className="h-10 rounded-md border border-border bg-transparent px-3 text-sm"
-        />
-        <label htmlFor="confirm-password" className="sr-only">
-          Confirm new password
-        </label>
-        <input
-          id="confirm-password"
-          type="password"
-          placeholder="Confirm new password"
-          value={confirm}
-          onChange={(e) => setConfirm(e.target.value)}
-          required
-          minLength={8}
-          className="h-10 rounded-md border border-border bg-transparent px-3 text-sm"
-        />
-        {error && <p className="text-sm text-danger">{error}</p>}
-        <Button type="submit" disabled={loading}>
+    <div className="auth-card">
+      <div className="auth-card-head auth-mono">ACCOUNT · RECOVERY</div>
+      <h1 className="auth-title auth-display">Set a new password</h1>
+
+      <form onSubmit={handleSubmit}>
+        <div className="auth-field">
+          <label htmlFor="new-password" className="auth-label auth-mono">
+            NEW PASSWORD
+          </label>
+          <input
+            id="new-password"
+            type="password"
+            placeholder="At least 8 characters"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            minLength={8}
+            className="auth-input"
+          />
+        </div>
+
+        <div className="auth-field">
+          <label htmlFor="confirm-password" className="auth-label auth-mono">
+            CONFIRM PASSWORD
+          </label>
+          <input
+            id="confirm-password"
+            type="password"
+            placeholder="Type it again"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            required
+            minLength={8}
+            className="auth-input"
+          />
+        </div>
+
+        {error && <p className="auth-error">{error}</p>}
+
+        <button type="submit" disabled={loading} className="auth-btn-primary">
           {loading ? "Resetting..." : "Reset password"}
-        </Button>
+        </button>
       </form>
     </div>
   );

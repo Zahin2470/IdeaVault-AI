@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
 
 export default function VerifyEmailPage() {
   const searchParams = useSearchParams();
@@ -23,28 +22,32 @@ export default function VerifyEmailPage() {
   }, [token]);
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-sm flex-col items-center justify-center px-4 text-center">
-      {status === "loading" && <p className="text-sm text-muted-foreground">Verifying...</p>}
+    <div className="auth-card" style={{ textAlign: "center" }}>
+      <div className="auth-card-head auth-mono">ACCOUNT · VERIFY</div>
+
+      {status === "loading" && <p className="auth-note">Verifying...</p>}
 
       {status === "success" && (
         <>
-          <h1 className="text-xl font-semibold tracking-tight">Email verified</h1>
-          <p className="mt-2 text-sm text-muted-foreground">You&apos;re all set.</p>
-          <Button asChild className="mt-4">
-            <a href="/dashboard">Go to Dashboard</a>
-          </Button>
+          <h1 className="auth-title auth-display">Email verified</h1>
+          <p className="auth-note" style={{ marginBottom: "1.25rem" }}>
+            You&apos;re all set.
+          </p>
+          <a href="/dashboard" className="auth-btn-primary" style={{ display: "block", lineHeight: "42px" }}>
+            Go to Dashboard
+          </a>
         </>
       )}
 
       {status === "error" && (
         <>
-          <h1 className="text-xl font-semibold tracking-tight">Link invalid or expired</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <h1 className="auth-title auth-display">Link invalid or expired</h1>
+          <p className="auth-note" style={{ marginBottom: "1.25rem" }}>
             Request a new verification email from Settings once you&apos;re signed in.
           </p>
-          <Button variant="outline" asChild className="mt-4">
-            <a href="/login">Sign in</a>
-          </Button>
+          <a href="/login" className="auth-btn-secondary" style={{ display: "block", lineHeight: "40px" }}>
+            Sign in
+          </a>
         </>
       )}
     </div>
