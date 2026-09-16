@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { EditableSection } from "@/components/projects/editable-section";
 import { MVPFeatureSelect } from "@/components/projects/mvp-feature-select";
 import { AISuggestButton } from "@/components/ai/ai-suggest-button";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { Feature } from "@prisma/client";
 
 interface MVPProjectData {
@@ -70,7 +71,16 @@ export default function MVPPage({ params }: { params: { projectId: string } }) {
     await handleSavePlan(joined);
   }
 
-  if (!data || !planValues) return <p className="text-sm text-muted-foreground">Loading...</p>;
+  if (!data || !planValues) {
+    return (
+      <div className="flex flex-col gap-5">
+        <Skeleton className="h-7 w-40" />
+        <Skeleton className="h-28 w-full" />
+        <Skeleton className="h-28 w-full" />
+        <Skeleton className="h-40 w-full" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-8">

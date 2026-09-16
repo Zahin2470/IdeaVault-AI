@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Trash2, Plus } from "lucide-react";
 import { MILESTONE_STATUSES } from "@/lib/validations/roadmap";
+import { CompletionStamp } from "@/components/motion/completion-stamp";
+import { useCompletionStamp } from "@/components/motion/use-completion-stamp";
 
 interface MilestoneWithTasks {
   id: string;
@@ -35,6 +37,7 @@ export function MilestoneList({ projectId, initialMilestones }: MilestoneListPro
   const [title, setTitle] = useState("");
   const [targetDate, setTargetDate] = useState("");
   const [adding, setAdding] = useState(false);
+  const stamp = useCompletionStamp();
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -65,6 +68,7 @@ export function MilestoneList({ projectId, initialMilestones }: MilestoneListPro
     });
     if (res.ok) {
       setMilestones((prev) => prev.map((m) => (m.id === id ? { ...m, status } : m)));
+      if (status === "COMPLETE") stamp.trigger("Milestone Complete");
     }
   }
 
@@ -76,6 +80,7 @@ export function MilestoneList({ projectId, initialMilestones }: MilestoneListPro
 
   return (
     <div className="flex flex-col gap-4">
+      <CompletionStamp show={stamp.visible} label={stamp.label} />
       <form onSubmit={handleAdd} className="flex flex-wrap gap-2">
         <Input
           placeholder="Milestone title"

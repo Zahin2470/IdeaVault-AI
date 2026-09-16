@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { Send } from "lucide-react";
 
@@ -73,7 +74,11 @@ export function ChatPanel({ projectId, emptyStateText }: ChatPanelProps) {
     <div className="flex h-[calc(100vh-10rem)] flex-col rounded-lg border border-border bg-card">
       <div className="flex-1 overflow-y-auto p-4">
         {loadingHistory ? (
-          <p className="text-sm text-muted-foreground">Loading...</p>
+          <div className="flex flex-col gap-3">
+            <Skeleton className="h-10 w-2/3" />
+            <Skeleton className="ml-auto h-10 w-1/2" />
+            <Skeleton className="h-10 w-3/5" />
+          </div>
         ) : messages.length === 0 ? (
           <p className="text-sm text-muted-foreground">{emptyStateText}</p>
         ) : (

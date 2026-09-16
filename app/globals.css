@@ -4,47 +4,69 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 8%;
+    /* Premium refresh: retiring the generic indigo default for the same
+       cyan/amber DNA established in the marketing and auth pages, so the
+       whole product reads as one brand instead of two. Cool off-white
+       instead of pure white/gray — subtle, but reads less clinical. */
+    --background: 220 20% 98%;
+    --foreground: 222 25% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 8%;
+    --card-foreground: 222 25% 12%;
 
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 4% 46%;
+    --muted: 220 14% 95%;
+    --muted-foreground: 220 9% 46%;
 
-    --border: 240 6% 90%;
+    --border: 220 13% 89%;
 
-    --accent: 255 60% 58%;
+    --accent: 191 70% 32%;
     --accent-foreground: 0 0% 100%;
+    --accent-2: 35 78% 42%;
+    --accent-2-foreground: 0 0% 100%;
 
-    --success: 142 71% 40%;
-    --warning: 38 92% 50%;
+    --success: 142 71% 38%;
+    --warning: 38 92% 48%;
     --danger: 0 72% 51%;
-    --info: 217 91% 60%;
+    --info: 217 91% 58%;
 
-    --radius: 0.75rem;
+    --radius: 0.85rem;
+    --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+
+    --shadow-color: 220 40% 10%;
+    --shadow-sm: 0 1px 2px hsl(var(--shadow-color) / 0.06);
+    --shadow-md: 0 4px 16px -4px hsl(var(--shadow-color) / 0.12), 0 2px 6px -2px hsl(var(--shadow-color) / 0.08);
+    --shadow-lg: 0 12px 32px -8px hsl(var(--shadow-color) / 0.18), 0 4px 12px -4px hsl(var(--shadow-color) / 0.1);
   }
 
   .dark {
-    --background: 240 10% 6%;
-    --foreground: 0 0% 96%;
+    /* Deep navy-black rather than neutral gray-black — same family as the
+       marketing page's cyanotype dark, tuned lighter/less saturated so
+       it stays comfortable across a dense app rather than a hero section. */
+    --background: 222 30% 7%;
+    --foreground: 210 20% 96%;
 
-    --card: 240 8% 9%;
-    --card-foreground: 0 0% 96%;
+    --card: 222 24% 10.5%;
+    --card-foreground: 210 20% 96%;
 
-    --muted: 240 6% 14%;
-    --muted-foreground: 240 5% 65%;
+    --muted: 222 20% 15%;
+    --muted-foreground: 217 12% 65%;
 
-    --border: 240 6% 18%;
+    --border: 222 18% 19%;
 
-    --accent: 255 65% 65%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 189 65% 62%;
+    --accent-foreground: 222 30% 8%;
+    --accent-2: 38 90% 60%;
+    --accent-2-foreground: 222 30% 8%;
 
-    --success: 142 71% 45%;
-    --warning: 38 92% 55%;
-    --danger: 0 72% 58%;
-    --info: 217 91% 65%;
+    --success: 142 65% 48%;
+    --warning: 38 92% 58%;
+    --danger: 0 72% 62%;
+    --info: 217 91% 68%;
+
+    --shadow-color: 222 50% 2%;
+    --shadow-sm: 0 1px 2px hsl(var(--shadow-color) / 0.4);
+    --shadow-md: 0 4px 16px -4px hsl(var(--shadow-color) / 0.5), 0 2px 6px -2px hsl(var(--shadow-color) / 0.4);
+    --shadow-lg: 0 16px 40px -8px hsl(var(--shadow-color) / 0.6), 0 4px 16px -4px hsl(var(--shadow-color) / 0.5);
   }
 
   * {
@@ -54,5 +76,104 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  ::selection {
+    background: hsl(var(--accent) / 0.25);
+  }
+}
+
+@layer utilities {
+  .ease-premium {
+    transition-timing-function: var(--ease-premium);
+  }
+}
+
+/* Ambient app background — the blueprint grid from marketing/auth,
+   faint enough for a dense working UI, plus a slow breathing glow so the
+   shell doesn't sit dead-static. This is the thing that was missing:
+   the last pass only touched interactive elements (hover/click), so the
+   app felt static whenever nothing was being clicked. */
+.app-bg-glow {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(hsl(var(--border)) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--border)) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.4;
+  mask-image: radial-gradient(ellipse 900px 700px at 10% -10%, black 30%, transparent 75%);
+}
+
+.app-bg-glow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 700px 500px at 8% -5%, hsl(var(--accent) / 0.1), transparent 60%),
+    radial-gradient(ellipse 600px 500px at 100% 0%, hsl(var(--accent-2) / 0.06), transparent 60%);
+  animation: bg-breathe 14s ease-in-out infinite;
+}
+
+@keyframes bg-breathe {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-bg-glow::after {
+    animation: none;
+  }
+}
+
+/* Smooth, consistent motion defaults for the interactive primitives below
+   — one easing curve used everywhere reads as more "designed" than each
+   component picking its own. */
+.transition-premium {
+  transition-property: color, background-color, border-color, box-shadow, transform, opacity;
+  transition-duration: 180ms;
+  transition-timing-function: var(--ease-premium);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 200ms var(--ease-premium);
+}
+
+@keyframes fade-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-fade-scale-in {
+  animation: fade-scale-in 200ms var(--ease-premium);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-scale-in,
+  .animate-fade-in {
+    animation: none;
   }
 }

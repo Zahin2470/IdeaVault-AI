@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { MEMBER_ROLES } from "@/lib/validations/member";
 import { Copy, Trash2, Check } from "lucide-react";
 
@@ -89,7 +90,14 @@ export function MembersPanel({ projectId }: { projectId: string }) {
     if (res.ok) await load();
   }
 
-  if (!data) return <p className="text-sm text-muted-foreground">Loading...</p>;
+  if (!data) {
+    return (
+      <div className="flex flex-col gap-2">
+        <Skeleton className="h-14 w-full" />
+        <Skeleton className="h-14 w-full" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-8">

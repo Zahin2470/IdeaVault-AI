@@ -6,6 +6,8 @@ import type { Idea } from "@prisma/client";
 import { CreateIdeaDialog } from "@/components/ideas/create-idea-dialog";
 import { IdeaFilters } from "@/components/ideas/idea-filters";
 import { IdeaCard } from "@/components/ideas/idea-card";
+import { StaggerList, StaggerItem } from "@/components/motion/stagger-list";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { IdeaFilter } from "@/lib/services/idea.service";
 
 // Idea Vault (§15). Client-rendered: filter/search state drives refetches
@@ -102,28 +104,33 @@ export default function IdeasPage() {
       />
 
       {loading ? (
-        <p className="text-sm text-muted-foreground">Loading ideas...</p>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-40" />
+          ))}
+        </div>
       ) : ideas.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-border py-16 text-center">
           <p className="text-muted-foreground">Your next big idea starts here.</p>
           <CreateIdeaDialog onCreated={(idea) => setIdeas((prev) => [idea, ...prev])} />
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <StaggerList className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {ideas.map((idea) => (
-            <IdeaCard
-              key={idea.id}
-              idea={idea}
-              onToggleFavorite={(i) => patchIdea(i.id, { favorite: !i.favorite })}
-              onToggleArchive={(i) =>
-                patchIdea(i.id, { status: i.status === "ARCHIVED" ? "EXPLORING" : "ARCHIVED" } as Partial<Idea>)
-              }
-              onDelete={handleDelete}
-              onConvert={handleConvert}
-              converting={convertingId === idea.id}
-            />
+            <StaggerItem key={idea.id}>
+              <IdeaCard
+                idea={idea}
+                onToggleFavorite={(i) => patchIdea(i.id, { favorite: !i.favorite })}
+                onToggleArchive={(i) =>
+                  patchIdea(i.id, { status: i.status === "ARCHIVED" ? "EXPLORING" : "ARCHIVED" } as Partial<Idea>)
+                }
+                onDelete={handleDelete}
+                onConvert={handleConvert}
+                converting={convertingId === idea.id}
+              />
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerList>
       )}
     </div>
   );

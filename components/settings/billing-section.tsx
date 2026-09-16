@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface SubscriptionData {
   status: string;
@@ -71,7 +72,7 @@ export function BillingSection() {
       <h2 className="text-lg font-semibold tracking-tight">Plan & Billing</h2>
 
       {loading ? (
-        <p className="text-sm text-muted-foreground">Loading...</p>
+        <Skeleton className="h-24 w-full" />
       ) : (
         <div className="flex flex-col gap-3 rounded-lg border border-border p-4">
           <div className="flex items-center justify-between">

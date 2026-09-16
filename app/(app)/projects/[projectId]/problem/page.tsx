@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { EditableSection } from "@/components/projects/editable-section";
 import { AISuggestButton } from "@/components/ai/ai-suggest-button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ProblemProposal {
   problem: string;
@@ -43,7 +44,16 @@ export default function ProblemPage({ params }: { params: { projectId: string } 
     await handleSave(proposal);
   }
 
-  if (!values) return <p className="text-sm text-muted-foreground">Loading...</p>;
+  if (!values) {
+    return (
+      <div className="flex flex-col gap-5">
+        <Skeleton className="h-7 w-40" />
+        <Skeleton className="h-28 w-full" />
+        <Skeleton className="h-28 w-full" />
+        <Skeleton className="h-28 w-full" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">

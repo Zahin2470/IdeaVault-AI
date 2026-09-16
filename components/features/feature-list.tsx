@@ -5,6 +5,7 @@ import { ArrowUp, ArrowDown, Trash2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { StaggerList, StaggerItem } from "@/components/motion/stagger-list";
 import type { Feature } from "@prisma/client";
 import { FEATURE_PRIORITIES, FEATURE_STATUSES } from "@/lib/validations/project";
 
@@ -106,9 +107,9 @@ export function FeatureList({ projectId, initialFeatures }: FeatureListProps) {
       {features.length === 0 ? (
         <p className="text-sm text-muted-foreground">No features yet — add the first one above.</p>
       ) : (
-        <div className="flex flex-col divide-y divide-border rounded-lg border border-border">
+        <StaggerList className="flex flex-col divide-y divide-border rounded-lg border border-border">
           {features.map((f, i) => (
-            <div key={f.id} className="flex items-center gap-3 p-3">
+            <StaggerItem key={f.id} className="flex items-center gap-3 p-3 transition-premium hover:bg-muted/40">
               <div className="flex flex-col">
                 <button
                   onClick={() => move(i, -1)}
@@ -172,9 +173,9 @@ export function FeatureList({ projectId, initialFeatures }: FeatureListProps) {
               >
                 <Trash2 className="h-4 w-4" />
               </button>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerList>
       )}
     </div>
   );
