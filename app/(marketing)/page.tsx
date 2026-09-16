@@ -1,3 +1,5 @@
+import { ThemeToggle } from "@/components/theme-toggle";
+
 // Landing page. Visual concept: "every blueprint starts as a scribble" —
 // the product's actual mechanic (messy idea → structured problem/
 // audience/solution/MVP) is the hero itself, not illustrated separately
@@ -14,9 +16,12 @@ export default function LandingPage() {
           </svg>
           IdeaVault
         </div>
-        <a href="/login" className="mkt-nav-link">
-          Sign in
-        </a>
+        <div className="mkt-nav-right">
+          <ThemeToggle className="mkt-theme-toggle" />
+          <a href="/login" className="mkt-nav-link">
+            Sign in
+          </a>
+        </div>
       </nav>
 
       <section className="mkt-hero">

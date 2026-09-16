@@ -4,6 +4,26 @@
    get past, not a persuasion page. No scribbles, no entrance animation. */
 
 .auth-root {
+  /* Light — "diazo print": dark ink on pale drafting paper. Default,
+     same convention as app/globals.css. */
+  --auth-ink: #f4f1e6;
+  --auth-ink-deep: #ede8d8;
+  --auth-grid: #c7d3da;
+  --auth-paper: #1a2b3b;
+  --auth-paper-dim: #5c6b77;
+  --auth-cyan: #0b7285;
+  --auth-cyan-dim: #5fa3b0;
+  --auth-amber: #b5720e;
+  --auth-danger: #c23b2e;
+
+  background: var(--auth-ink);
+  color: var(--auth-paper);
+  font-family: var(--font-body), sans-serif;
+  min-height: 100vh;
+}
+
+.dark .auth-root {
+  /* Dark — "cyanotype print": the original blueprint. */
   --auth-ink: #0e2233;
   --auth-ink-deep: #081722;
   --auth-grid: #1d3e58;
@@ -13,11 +33,6 @@
   --auth-cyan-dim: #3f7f8f;
   --auth-amber: #f4a93b;
   --auth-danger: #f08a7a;
-
-  background: var(--auth-ink);
-  color: var(--auth-paper);
-  font-family: var(--font-body), sans-serif;
-  min-height: 100vh;
 }
 
 .auth-mono {
@@ -50,16 +65,41 @@
   padding: 2rem 1.25rem;
 }
 
-.auth-brand {
+.auth-top-row {
   position: relative;
   z-index: 1;
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: clamp(2.5rem, 8vh, 4.5rem);
+}
+
+.auth-brand {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   font-size: 1rem;
   font-weight: 500;
   color: var(--auth-paper);
-  margin-bottom: clamp(2.5rem, 8vh, 4.5rem);
+}
+
+.auth-theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--auth-grid);
+  color: var(--auth-paper-dim);
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.auth-theme-toggle:hover {
+  border-color: var(--auth-cyan-dim);
+  color: var(--auth-paper);
 }
 
 .auth-center {
@@ -112,7 +152,7 @@
   height: 42px;
   border-radius: 5px;
   border: 1px solid var(--auth-grid);
-  background: rgba(111, 216, 232, 0.04);
+  background: color-mix(in srgb, var(--auth-cyan) 5%, transparent);
   color: var(--auth-paper);
   padding: 0 0.85rem;
   font-size: 0.9rem;
@@ -156,7 +196,7 @@
 }
 
 .auth-btn-primary:hover {
-  background: #8be3f0;
+  filter: brightness(1.12);
 }
 
 .auth-btn-primary:disabled {

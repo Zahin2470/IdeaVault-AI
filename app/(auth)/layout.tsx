@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { Space_Grotesk, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import { ThemeToggle } from "@/components/theme-toggle";
 import "./auth.css";
 
 // Same blueprint brand as the marketing page (Space Grotesk + IBM Plex),
@@ -30,14 +31,17 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
     <div className={`${display.variable} ${body.variable} ${monoFont.variable} auth-root`}>
       <div className="auth-grid-bg" aria-hidden="true" />
       <div className="auth-shell">
-        <Link href="/" className="auth-brand auth-display">
-          <svg width="20" height="20" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-            <circle cx="11" cy="11" r="8.5" stroke="var(--auth-cyan)" strokeWidth="1.4" />
-            <path d="M11 2.5V5M11 17V19.5M2.5 11H5M17 11H19.5" stroke="var(--auth-cyan)" strokeWidth="1.4" />
-            <circle cx="11" cy="11" r="1.6" fill="var(--auth-amber)" />
-          </svg>
-          IdeaVault
-        </Link>
+        <div className="auth-top-row">
+          <Link href="/" className="auth-brand auth-display">
+            <svg width="20" height="20" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+              <circle cx="11" cy="11" r="8.5" stroke="var(--auth-cyan)" strokeWidth="1.4" />
+              <path d="M11 2.5V5M11 17V19.5M2.5 11H5M17 11H19.5" stroke="var(--auth-cyan)" strokeWidth="1.4" />
+              <circle cx="11" cy="11" r="1.6" fill="var(--auth-amber)" />
+            </svg>
+            IdeaVault
+          </Link>
+          <ThemeToggle className="auth-theme-toggle" />
+        </div>
         <div className="auth-center">{children}</div>
       </div>
     </div>

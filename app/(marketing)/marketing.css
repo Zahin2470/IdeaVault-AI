@@ -4,6 +4,29 @@
    to click in, not to stay quiet the way a working app's chrome should. */
 
 .mkt-root {
+  /* Light — "diazo print": dark ink on pale drafting paper. Default,
+     matches the app's :root-is-light / .dark-overrides convention in
+     app/globals.css. */
+  --mkt-ink: #f4f1e6;
+  --mkt-ink-deep: #ede8d8;
+  --mkt-grid: #c7d3da;
+  --mkt-paper: #1a2b3b;
+  --mkt-paper-dim: #5c6b77;
+  --mkt-cyan: #0b7285;
+  --mkt-cyan-dim: #5fa3b0;
+  --mkt-amber: #b5720e;
+  --mkt-card: #fbe59a;
+  --mkt-card-ink: #2a2419;
+
+  background: var(--mkt-ink);
+  color: var(--mkt-paper);
+  font-family: var(--font-body), sans-serif;
+  min-height: 100vh;
+}
+
+.dark .mkt-root {
+  /* Dark — "cyanotype print": the original blueprint, white line on
+     navy. */
   --mkt-ink: #0e2233;
   --mkt-ink-deep: #081722;
   --mkt-grid: #1d3e58;
@@ -14,11 +37,6 @@
   --mkt-amber: #f4a93b;
   --mkt-card: #efe7d3;
   --mkt-card-ink: #2a2419;
-
-  background: var(--mkt-ink);
-  color: var(--mkt-paper);
-  font-family: var(--font-body), sans-serif;
-  min-height: 100vh;
 }
 
 .mkt-mono {
@@ -65,6 +83,29 @@
   gap: 0.5rem;
   font-size: 1.05rem;
   font-weight: 500;
+  color: var(--mkt-paper);
+}
+
+.mkt-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.mkt-theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  border: 1px solid var(--mkt-grid);
+  color: var(--mkt-paper-dim);
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.mkt-theme-toggle:hover {
+  border-color: var(--mkt-cyan-dim);
   color: var(--mkt-paper);
 }
 
@@ -235,7 +276,7 @@
 }
 
 .mkt-btn-primary:hover {
-  background: #8be3f0;
+  filter: brightness(1.12);
   transform: translateY(-1px);
 }
 
@@ -261,7 +302,7 @@
 
 .mkt-hero-stage:has(.mkt-spec-row[data-row="problem"]:hover) .mkt-spec-row[data-row="problem"],
 .mkt-hero-stage:has(.mkt-card-1:hover) .mkt-spec-row[data-row="problem"] {
-  background: rgba(111, 216, 232, 0.08);
+  background: color-mix(in srgb, var(--mkt-cyan) 12%, transparent);
 }
 
 .mkt-hero-stage:has(.mkt-card-2:hover) .mkt-spec-row[data-row="audience"],
@@ -271,7 +312,7 @@
 
 .mkt-hero-stage:has(.mkt-spec-row[data-row="audience"]:hover) .mkt-spec-row[data-row="audience"],
 .mkt-hero-stage:has(.mkt-card-2:hover) .mkt-spec-row[data-row="audience"] {
-  background: rgba(111, 216, 232, 0.08);
+  background: color-mix(in srgb, var(--mkt-cyan) 12%, transparent);
 }
 
 .mkt-hero-stage:has(.mkt-card-3:hover) .mkt-spec-row[data-row="solution"],
@@ -281,7 +322,7 @@
 
 .mkt-hero-stage:has(.mkt-spec-row[data-row="solution"]:hover) .mkt-spec-row[data-row="solution"],
 .mkt-hero-stage:has(.mkt-card-3:hover) .mkt-spec-row[data-row="solution"] {
-  background: rgba(111, 216, 232, 0.08);
+  background: color-mix(in srgb, var(--mkt-cyan) 12%, transparent);
 }
 
 .mkt-spec-row {
