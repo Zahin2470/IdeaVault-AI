@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { Space_Grotesk, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { IdeaNetworkBackground } from "@/components/motion/idea-network-background";
 import "./auth.css";
 
 // Same blueprint brand as the marketing page (Space Grotesk + IBM Plex),
@@ -30,6 +31,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <div className={`${display.variable} ${body.variable} ${monoFont.variable} auth-root`}>
       <div className="auth-grid-bg" aria-hidden="true" />
+      <IdeaNetworkBackground accentVar="--auth-cyan" accent2Var="--auth-amber" />
       <div className="auth-shell">
         <div className="auth-top-row">
           <Link href="/" className="auth-brand auth-display">

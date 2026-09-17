@@ -6,6 +6,7 @@ import { GlobalSearch } from "@/components/search/global-search";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { IdeaNetworkBackground } from "@/components/motion/idea-network-background";
 import { Settings } from "lucide-react";
 
 // Base authenticated shell (§9, §58): sidebar + content area on desktop.
@@ -17,6 +18,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen">
       <div className="app-bg-glow" aria-hidden="true" />
+      <IdeaNetworkBackground />
 
       <aside className="hidden w-60 shrink-0 border-r border-border bg-card md:flex md:flex-col">
         <Link href="/dashboard" className="flex items-center gap-2 px-5 py-6 text-lg font-semibold tracking-tight">

@@ -90,14 +90,14 @@
 }
 
 /* Ambient app background — the blueprint grid from marketing/auth,
-   faint enough for a dense working UI, plus a slow breathing glow so the
-   shell doesn't sit dead-static. This is the thing that was missing:
-   the last pass only touched interactive elements (hover/click), so the
-   app felt static whenever nothing was being clicked. */
+   faint enough for a dense working UI. The actual motion now comes from
+   IdeaNetworkBackground's canvas (components/motion/idea-network-background.tsx),
+   layered on top of this static grid — this class just provides the
+   structural backdrop underneath it. */
 .app-bg-glow {
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: -2;
   pointer-events: none;
   background-image:
     linear-gradient(hsl(var(--border)) 1px, transparent 1px),
@@ -107,31 +107,13 @@
   mask-image: radial-gradient(ellipse 900px 700px at 10% -10%, black 30%, transparent 75%);
 }
 
-.app-bg-glow::after {
-  content: "";
-  position: absolute;
+/* Shared by IdeaNetworkBackground wherever it's mounted (app shell, auth
+   pages) — sits just above the static grid, still behind all content. */
+.idea-network-canvas {
+  position: fixed;
   inset: 0;
-  background:
-    radial-gradient(ellipse 700px 500px at 8% -5%, hsl(var(--accent) / 0.1), transparent 60%),
-    radial-gradient(ellipse 600px 500px at 100% 0%, hsl(var(--accent-2) / 0.06), transparent 60%);
-  animation: bg-breathe 14s ease-in-out infinite;
-}
-
-@keyframes bg-breathe {
-  0%, 100% {
-    opacity: 0.7;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.06);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .app-bg-glow::after {
-    animation: none;
-  }
+  z-index: -1;
+  pointer-events: none;
 }
 
 /* Smooth, consistent motion defaults for the interactive primitives below
