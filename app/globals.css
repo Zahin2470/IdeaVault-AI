@@ -78,12 +78,50 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
+  /* This was the single biggest miss in the previous pass: --font-display
+     was loaded app-wide back in Phase 24 for the completion stamp, but
+     never actually applied to headings — every h1/h2/h3 in the app was
+     still rendering in the body font. Distinctive heading type is one of
+     the clearest, cheapest signals of a considered interface vs. a
+     templated one, and this one rule fixes it everywhere at once. */
+  h1, h2, h3 {
+    font-family: var(--font-display), sans-serif;
+    letter-spacing: -0.015em;
+  }
+
   ::selection {
     background: hsl(var(--accent) / 0.25);
   }
 }
 
 @layer utilities {
+  /* Gradient text for the numbers/moments that should carry weight —
+     dashboard stats, not every heading (overusing this cheapens it). */
+  .text-gradient-accent {
+    background: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-2)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Glow-on-hover for cards — a soft ring plus a slightly stronger
+     border, instead of just the lift from Phase 23. This is the detail
+     that separates "has a hover state" from "feels premium": the glow
+     reads as light, not just a state change. */
+  .hover-glow {
+    transition: box-shadow 200ms var(--ease-premium), border-color 200ms var(--ease-premium);
+  }
+  .hover-glow:hover {
+    border-color: hsl(var(--accent) / 0.45);
+    box-shadow: 0 0 0 1px hsl(var(--accent) / 0.12), var(--shadow-md);
+  }
+
+  /* Subtle top-to-bottom depth on surfaces instead of a flat fill — the
+     "glass" quality premium UIs have that a single solid background
+     never quite gets to. */
+  .surface-premium {
+    background: linear-gradient(180deg, hsl(var(--card)), hsl(var(--card) / 0.94));
+  }
   .ease-premium {
     transition-timing-function: var(--ease-premium);
   }

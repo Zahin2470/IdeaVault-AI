@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/check-due-tasks",
       "schedule": "0 13 * * *"
+    },
+    {
+      "path": "/api/cron/reset-demo",
+      "schedule": "0 */6 * * *"
     }
   ]
 }

@@ -5,6 +5,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db/prisma";
 import { checkRateLimit } from "@/lib/services/rate-limit.service";
+import { isDemoEmail } from "@/lib/services/demo.service";
 
 // Central Auth.js config (§12). Database sessions via the Prisma adapter
 // so sessions can be revoked server-side, not just by expiring a JWT.
@@ -31,15 +32,21 @@ export const authOptions: NextAuthOptions = {
       // proxy. A failed rate-limit check returns null, same as a wrong
       // password — the login form has no way to distinguish the two,
       // so it can't be used to confirm an account exists or is locked.
+      // The public demo account is exempt: it's meant to be signed into
+      // by many simultaneous strangers sharing the same email, which
+      // would otherwise exhaust the shared bucket and lock everyone out
+      // after 10 uses in 15 minutes.
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        const allowed = await checkRateLimit(
-          `login:email:${credentials.email.toLowerCase()}`,
-          10,
-          15 * 60 * 1000 // 10 attempts / 15 minutes
-        );
-        if (!allowed) return null;
+        if (!isDemoEmail(credentials.email)) {
+          const allowed = await checkRateLimit(
+            `login:email:${credentials.email.toLowerCase()}`,
+            10,
+            15 * 60 * 1000 // 10 attempts / 15 minutes
+          );
+          if (!allowed) return null;
+        }
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },

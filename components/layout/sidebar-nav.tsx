@@ -39,7 +39,7 @@ export function SidebarNav() {
             {isActive && (
               <motion.div
                 layoutId="sidebar-active-pill"
-                className="absolute inset-0 rounded-md bg-accent shadow-elevation-sm"
+                className="absolute inset-0 rounded-md bg-[linear-gradient(135deg,hsl(var(--accent)/1),hsl(var(--accent)/0.85))] shadow-elevation-sm"
                 transition={{ type: "spring", stiffness: 400, damping: 32 }}
               />
             )}

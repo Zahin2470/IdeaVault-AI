@@ -2,6 +2,7 @@ import { randomBytes } from "crypto";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db/prisma";
 import { sendPasswordResetEmail } from "@/lib/email/send";
+import { isDemoEmail } from "@/lib/services/demo.service";
 
 const RESET_TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hour
 const RESET_PREFIX = "reset:";
@@ -10,7 +11,13 @@ const RESET_PREFIX = "reset:";
 // email exists — the route never reveals which, to avoid leaking which
 // addresses have accounts. Logs the link to the server console when
 // RESEND_API_KEY isn't configured, so this is testable without email set up.
+// The public demo account is silently excluded — its whole point is a
+// stable, always-available shared login, so letting anyone request a
+// reset for it would let one visitor lock out every other visitor by
+// changing its password.
 export async function requestPasswordReset(email: string) {
+  if (isDemoEmail(email)) return;
+
   const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
   if (!user || !user.passwordHash) return; // OAuth-only accounts have nothing to reset
 

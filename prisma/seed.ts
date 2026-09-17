@@ -1,24 +1,14 @@
+import { resetDemoData } from "../lib/services/demo.service";
 import { prisma } from "../lib/db/prisma";
-import bcrypt from "bcryptjs";
 
-// Minimal Phase 1 seed: one demo user, enough for auth to be testable.
-// Ideas/projects/tasks seed data (§59, §67) lands in a later phase once
-// those models are actually exercised by the app.
+// Seeds (or resets) the one demo account, fully populated with a sample
+// idea → project so a fresh local setup — or someone clicking "Explore
+// Demo" on the landing page for the first time — doesn't land on an
+// empty app. The same resetDemoData() function backs the periodic
+// public-demo reset cron (app/api/cron/reset-demo/route.ts).
 async function main() {
-  const passwordHash = await bcrypt.hash("password123", 10);
-
-  const user = await prisma.user.upsert({
-    where: { email: "alex@example.com" },
-    update: {},
-    create: {
-      name: "Alex Morgan",
-      email: "alex@example.com",
-      passwordHash,
-      preferences: { create: {} },
-    },
-  });
-
-  console.log(`Seeded user: ${user.email}`);
+  const user = await resetDemoData();
+  console.log(`Seeded demo user: ${user.email}`);
 }
 
 main()

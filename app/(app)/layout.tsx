@@ -20,7 +20,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       <div className="app-bg-glow" aria-hidden="true" />
       <IdeaNetworkBackground />
 
-      <aside className="hidden w-60 shrink-0 border-r border-border bg-card md:flex md:flex-col">
+      <aside className="surface-premium hidden w-60 shrink-0 border-r border-border md:flex md:flex-col">
         <Link href="/dashboard" className="flex items-center gap-2 px-5 py-6 text-lg font-semibold tracking-tight">
           <svg width="20" height="20" viewBox="0 0 22 22" fill="none" aria-hidden="true">
             <circle cx="11" cy="11" r="8.5" className="stroke-accent" strokeWidth="1.4" />

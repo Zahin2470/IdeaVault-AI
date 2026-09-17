@@ -70,7 +70,7 @@ export default async function DashboardPage() {
               <StaggerItem key={p.id}>
                 <Link
                   href={`/projects/${p.id}`}
-                  className="flex flex-col gap-2 rounded-lg border border-border bg-card p-4 shadow-elevation-sm transition-premium hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-elevation-md"
+                  className="hover-glow surface-premium flex flex-col gap-2 rounded-lg border border-border p-4 shadow-elevation-sm transition-premium hover:-translate-y-0.5 hover:shadow-elevation-md"
                 >
                   <div className="flex items-center justify-between">
                     <h3 className="font-medium">{p.name}</h3>
@@ -144,9 +144,11 @@ export default async function DashboardPage() {
 
 function StatCard({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-lg border border-border bg-card p-4 shadow-elevation-sm transition-premium hover:-translate-y-0.5 hover:shadow-elevation-md">
-      <p className="text-2xl font-semibold tracking-tight">
-        <AnimatedNumber value={value} />
+    <div className="hover-glow surface-premium rounded-lg border border-border p-4 shadow-elevation-sm transition-premium hover:-translate-y-0.5 hover:shadow-elevation-md">
+      <p className="font-display text-3xl font-bold tracking-tight">
+        <span className="text-gradient-accent">
+          <AnimatedNumber value={value} />
+        </span>
       </p>
       <p className="text-xs text-muted-foreground">{label}</p>
     </div>

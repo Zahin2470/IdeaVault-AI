@@ -92,7 +92,7 @@ export function TaskBoard({ projectId, initialTasks, features, milestones }: Tas
                 {columnTasks.map((task) => (
                   <StaggerItem
                     key={task.id}
-                    className="flex flex-col gap-2 rounded-md border border-border bg-card p-3 shadow-elevation-sm transition-premium hover:shadow-elevation-md"
+                    className="hover-glow surface-premium flex flex-col gap-2 rounded-md border border-border p-3 shadow-elevation-sm transition-premium hover:shadow-elevation-md"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <p className="text-sm font-medium leading-snug">{task.title}</p>

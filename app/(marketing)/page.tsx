@@ -1,4 +1,5 @@
 import { ThemeToggle } from "@/components/theme-toggle";
+import { ExploreDemoButton } from "@/components/marketing/explore-demo-button";
 
 // Landing page. Visual concept: "every blueprint starts as a scribble" —
 // the product's actual mechanic (messy idea → structured problem/
@@ -77,13 +78,15 @@ export default function LandingPage() {
             with an AI copilot that only writes what you approve.
           </p>
           <div className="mkt-cta">
-            <a href="/register" className="mkt-btn-primary">
+            <ExploreDemoButton className="mkt-btn-primary" />
+            <a href="/register" className="mkt-btn-secondary">
               Start capturing — free
             </a>
-            <a href="/login" className="mkt-btn-secondary">
-              Sign in
-            </a>
           </div>
+          <p className="mkt-cta-subtext">
+            No signup. Signs you into a live, shared demo account so you can click around the real
+            app. <a href="/login">Sign in</a> if you already have your own account.
+          </p>
         </div>
       </section>
 

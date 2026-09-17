@@ -37,7 +37,7 @@ export function IdeaCard({
   const isArchived = idea.status === "ARCHIVED";
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-4 shadow-elevation-sm transition-premium hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-elevation-md">
+    <div className="hover-glow surface-premium flex flex-col gap-3 rounded-lg border border-border p-4 shadow-elevation-sm transition-premium hover:-translate-y-0.5 hover:shadow-elevation-md">
       <div className="flex items-start justify-between gap-2">
         <h3 className="font-medium leading-snug">{idea.title}</h3>
         <button

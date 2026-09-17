@@ -53,7 +53,7 @@ export default function ProjectsPage() {
             <StaggerItem key={p.id}>
               <Link
                 href={`/projects/${p.id}`}
-                className="flex flex-col gap-2 rounded-lg border border-border bg-card p-4 shadow-elevation-sm transition-premium hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-elevation-md"
+                className="hover-glow surface-premium flex flex-col gap-2 rounded-lg border border-border p-4 shadow-elevation-sm transition-premium hover:-translate-y-0.5 hover:shadow-elevation-md"
               >
                 <div className="flex items-center justify-between">
                   <h3 className="font-medium">{p.name}</h3>
